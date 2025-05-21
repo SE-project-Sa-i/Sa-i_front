@@ -1,0 +1,238 @@
+/* === 기본 래퍼 === */
+.memory-wrapper {
+  width: 1000px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f4;
+  border: 1px solid #b0b0b0;
+  border-radius: 12px;
+  font-family: "sans-serif";
+}
+
+/* === 헤더 === */
+.memory-header {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.memory-header h1 {
+  font-size: 28px;
+  font-style: italic;
+  color: #1d3b2a;
+  font-weight: bold;
+}
+
+.memory-header .date {
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 1rem;
+  color: #666;
+  transition: color 0.2s;
+}
+.edit-btn:hover {
+  color: #1d3b2a;
+}
+
+/* === 본문 영역 === */
+.memory-body {
+  display: flex;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+/* 왼쪽 영역 */
+.memory-left {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #b9cdb9;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+/* 프로필 영역 */
+.profile {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #eeeeee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  font-size: 16px;
+  color: #555;
+  border: 2px dashed #7e9f8c;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.profile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 감정 레벨 */
+.emotion-status {
+  margin-bottom: 1rem;
+  font-size: 14px;
+  color: #a02020;
+  font-weight: bold;
+}
+
+/* 노트 */
+.note {
+  font-size: 14px;
+  margin-bottom: 0.5rem;
+  color: #333;
+  text-align: center;
+}
+
+/* 오른쪽 영역 */
+.memory-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 경로 */
+.memory-path {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+/* 타임라인 */
+.timeline-section {
+  border: 1px solid #cfcfcf;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-header {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.timeline-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.timeline-item {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: #f0f4f1;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* 추가 버튼 */
+.add-timeline {
+  margin-top: 1rem;
+  align-self: center;
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  border: none;
+  background-color: #7e9f8c;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-timeline:hover {
+  background-color: #507060;
+}
+
+/* extra button */
+.extra-info {
+  margin-top: 1rem;
+  width: 100%;
+  font-size: 13px;
+  color: #333;
+}
+.info-item {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  margin-bottom: 0.4rem;
+  text-align: left;
+  font-style: italic;
+}
+
+.edit-toggle {
+  margin-left: 1rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 14px;
+  background-color: #f0f0f0;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.edit-toggle:hover {
+  background-color: #ddd;
+}
+
+.upload-input {
+  margin-top: 0.5rem;
+}
+
+.edit-icon {
+  background: none;
+  border: none;
+  font-size: 14px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.edit-notes-btn {
+  margin-top: 0.5rem;
+  font-size: 12px;
+  background-color: transparent;
+  color: #555;
+  border: 1px dashed #888;
+  border-radius: 5px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.edit-icon {
+  background: none;
+  border: none;
+  margin-left: 0.5rem;
+  font-size: 16px;
+  cursor: pointer;
+  color: #555;
+}
+
+.edit-icon:hover {
+  color: #000;
+}
