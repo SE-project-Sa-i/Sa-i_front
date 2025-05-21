@@ -8,10 +8,40 @@ function DeleteAccount() {
   const navigate = useNavigate();
   const checkpwd = (e) => {
     e.preventDefault();
+
+    // test 비밀번호
+    const actualPassword = "test"; // 실제 비밀번호 -----------> API
+
     console.log("비밀번호 입력:", { password });
 
-    //navigate("/SignIn"); // 클릭 시 "/signin" 페이지로 이동
+    if (password === actualPassword) {
+      alert("계정삭제가 완료되었습니다.");
+      navigate("/", { replace: true }); // 삭제 후 LogIn Page로 이동
+    } else {
+      alert("비밀번호가 일치하지 않습니다.");
+    }
   };
+
+  /* 
+  서버 연동시...
+  const checkpwd = async (e) => {
+  e.preventDefault();
+
+  const res = await fetch("/api/delete-account", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password }),
+  });
+
+  const result = await res.json();
+
+  if (result.success) {
+    alert("계정삭제가 완료되었습니다.");
+    navigate("/SignIn");
+  } else {
+    alert("비밀번호가 일치하지 않습니다.");
+  }
+}; */
 
   return (
     <div className="page-center-col">

@@ -1,11 +1,28 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 import "./Login.css";
 
 function Login() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  // 로그인 페이지에서 뒤로 가기 비활성화 시키기
+  useEffect(() => {
+    const handlePopState = () => {
+      // 뒤로 가기 눌렀을 때도 다시 로그인 페이지로 고정시킴
+      window.history.pushState(null, "", window.location.href);
+    };
+    // 처음 로딩 시에 history 초기화
+    window.history.pushState(null, "", window.location.href); // 초기 상태
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -30,7 +47,7 @@ function Login() {
     }
 
     console.log("로그인 성공:", { id });
-    navigate("/SignIn"); // 클릭 시 "/signin" 페이지로 이동
+    navigate("/SignIn", { replace: true }); // 클릭 시 "/signin" 페이지로 이동
   };
 
   /* 
