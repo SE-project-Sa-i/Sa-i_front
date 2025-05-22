@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { FaPen } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import CategoryPopupManager from './Component/CategoryPopupManager';
+import CategoryPopupManager from '../Component/CategoryPopupManager';
 
 export default function Category() {
   const [visible, setVisible] = useState(true);

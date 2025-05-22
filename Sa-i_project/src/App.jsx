@@ -3,8 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Home from './Home';
-import PeopleList from './PeopleList';
-import Category from './Category';
+import PeopleList from './Pages/PeopleList';
+import Category from './Pages/Category';
 
 function App() {
   return (
