@@ -1,10 +1,12 @@
 import "./App.css";
+import React from 'react';
+import MainScreen from './Pages/MainScreen';
 
 function App() {
   return (
-    <>
-      <h1>Hello React</h1>
-    </>
+    <div>
+      <MainScreen />
+    </div>
   );
 }
 
