@@ -3,6 +3,7 @@ import { IoClose } from 'react-icons/io5';
 import { FaPen } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import CategoryPopupManager from '../Component/CategoryPopupManager';
+import "./List.css";
 
 export default function Category() {
   const [visible, setVisible] = useState(true);
@@ -89,20 +90,20 @@ export default function Category() {
   if (!visible) return null;
 
   return (
-    <div className="flex w-screen h-screen overflow-hidden font-sans bg-[#f3efed] select-none">
+    <div className="flex w-screen h-screen overflow-hidden font-sans bg-[#F8F2F0] select-none">
       {/* 왼쪽: 로고 영역 */}
       <div className="w-[35%] h-full flex items-center justify-center">
-        <h1 className="text-6xl font-bold text-[#4f4b48] leading-tight">
+        <h1 className="list_text mb-1 text-center">
           List <br />
-          <span className="text-8xl text-[#4f614b] tracking-tight">Sa:i</span>
+          <span className="sai_text">Sa:i</span>
         </h1>
       </div>
 
       {/* 오른쪽 전체 영역 */}
-      <div className="relative w-[65%] h-screen bg-[#f3efed] flex flex-col">
+      <div className="relative w-[65%] h-screen bg-[#F8F2F0] flex flex-col">
         {/* 헤더 영역 */}
         <div className="flex justify-between items-center px-[5%] h-[10%] mb-2">
-          <h2 className="text-4xl font-bold text-[#4f4b48]">Category</h2>
+          <h2 className="category_text">Category</h2>
           <button
             onClick={() => {navigate('/');
               setVisible(false);}}

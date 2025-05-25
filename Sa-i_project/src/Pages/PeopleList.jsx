@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { FaStar } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
+import "./List.css";
 
 const people = [
   { name: '김명윤', starred: true, tags: ['University', 'Team Project', 'Software Engineering'] },
@@ -22,7 +24,7 @@ const people = [
 
 export default function PeopleList() {
   const [visible, setVisible] = useState(true);
-  const [peopleState, setPeopleState] = useState(people);
+  const [peopleState, setPeopleState] = useState([]);
   const navigate = useNavigate();
 
   const toggleStar = (index) => {
@@ -35,22 +37,30 @@ export default function PeopleList() {
 
   if (!visible) return null;
 
+  // 백엔드 연동 가능하도록 useEffect로 데이터 불러오는 구조
+  useEffect(() => {
+    // 나중에 실제 fetch로 교체
+    // fetch('/api/people').then(res => res.json()).then(setPeopleState);
+    setPeopleState(people); // 지금은 더미데이터로 대체
+  }, []);
+  //잘 모르지만 백엔드 연동 GPT한테 물어봐서 이렇게 해두면 편하다고 하네요...ㅎㅎㅎ
+
   return (
-    <div className="flex w-screen h-screen overflow-hidden font-sans bg-[#f3efed] select-none">
+    <div className="flex w-screen h-screen overflow-hidden font-sans bg-[#F8F2F0] select-none">
       {/* 왼쪽: 40% */}
       <div className="w-[35%] h-full flex items-center justify-center">
-        <h1 className="text-6xl font-bold text-[#4f4b48] leading-tight">
+        <h1 className="list_text mb-1 text-center">
           List <br />
-          <span className="text-8xl text-[#4f614b] tracking-tight">Sa:i</span>
+          <span className="sai_text">Sa:i</span>
         </h1>
       </div>
 
       {/* 오른쪽: 60% */}
-      <div className="relative w-[65%] h-screen bg-[#f3efed] flex flex-col">
+      <div className="relative w-[65%] h-screen bg-[#F8F2F0] flex flex-col">
         {/* 제목 & 닫기 버튼 (고정) */}
         <div className="flex justify-between items-center px-[5%] h-[10%] mb-2 select-none"> 
           {/* mb는 margin-bottom => 제목과 카드리스트 사이 공간 */}
-          <h2 className="text-4xl font-bold text-[#4f4b48]">People</h2>
+          <h2 className="people_text">People</h2>
           <button
             onClick={() => {
               setVisible(false);
