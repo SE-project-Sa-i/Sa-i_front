@@ -19,7 +19,7 @@ import './MainScreen.css';
 export default function MainScreen() {
   const networkRef = useRef(null);
   const networkInstance = useRef(null);
-  // 노드 클릭 시 UserCard의 표시 여부
+  // 노드 클릭 시, UserCard의 표시 여부
   const [cardVisible, setCardVisible] = useState(false);
   // 클릭한 노드의 좌표를 이용해 UserCard 위치 설정
   const [cardPosition, setCardPosition] = useState({ x: 0, y: 0 });
@@ -35,6 +35,8 @@ export default function MainScreen() {
   const [categories, setCategories] = useState([]);
   // 사용자 생성 노드 목록
   const [nodes, setNodes] = useState([]);
+  // 지구 아이콘 클릭 시, 사용자 이름 나타남
+  const [userName, setUserName] = useState("Soobin's Network");
 
   // 노드 데이터 업데이트
   const handleNodeUpdate = (updatedNodeData) => {
@@ -78,7 +80,10 @@ export default function MainScreen() {
 
     // 카테고리, 노드 설정
     const nodesData = [
-      { id: 'me', shape: 'image', image: earthIMG, size: 150, x: 0, y: 0, fixed: true },
+      { id: 'me', shape: 'image', image: earthIMG, 
+        size: 150, x: 0, y: 0, fixed: true,
+        title: userName // tooltip으로 사용자 이름 표시
+      },
       // C1, C2 임시 카테고리 (제외 상태)
       ...categories.filter(category => category.id !== 'c1' && category.id !== 'c2').map(category => ({
         id: category.id, label: category.name,
@@ -130,7 +135,10 @@ export default function MainScreen() {
       physics: false, // 물리 엔진 비활성화 (자동 이동 X)
       interaction: { 
         dragNodes: true, // 노드 드래그 O
-        dragView: false }, // 전체 화면 드래그 X
+        dragView: false, // 전체 화면 드래그 X
+        tooltipDelay: 100, // tooltip 표시 지연 시간 (ms)
+        hideEdgesOnDrag: false // 드래그 시 엣지 숨기기 비활성화
+      },
       edges: { color: '#507060', width: 3 } // 엣지 설정
     };
 
@@ -176,7 +184,7 @@ export default function MainScreen() {
         networkInstance.current.destroy();
       }
     };
-  }, [categories, nodes]);
+  }, [categories, nodes, userName]);
 
   return (
     <div className="main-screen">
