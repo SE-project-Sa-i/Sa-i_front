@@ -37,15 +37,27 @@ export default function MainScreen() {
   const [nodes, setNodes] = useState([]);
   // 지구 아이콘 클릭 시, 사용자 이름 나타남
   const [userName, setUserName] = useState("Soobin's Network");
+  // 노드의 현재 위치 저장
+  const [nodePositions, setNodePositions] = useState({});
+
+  // 노드 위치 업데이트
+  const updateNodePositions = () => {
+    if (networkInstance.current) {
+      const positions = networkInstance.current.getPositions();
+      setNodePositions(positions);
+    }
+  };
 
   // 노드 데이터 업데이트
   const handleNodeUpdate = (updatedNodeData) => {
+    updateNodePositions(); // 노드 위치 저장
     setNodes(prev => prev.map(node => node.id === updatedNodeData.id ? updatedNodeData : node));
     setClickedNodeData(updatedNodeData); // 현재 선택된 노드 데이터 업데이트
   };
 
   // 카테고리 추가
   const handleCategoryCreated = (categoryData) => {
+    updateNodePositions(); // 카테고리 추가 전 현재 위치 저장
     const newCategory = {
       id: `c${Date.now()}`, // 카테고리 ID
       name: categoryData.name, // 카테고리 이름
@@ -58,6 +70,8 @@ export default function MainScreen() {
 
   // 노드 추가
   const handleNodeCreated = (nodeData) => {
+    // 노드 추가 전 현재 위치 저장
+    updateNodePositions();
     const newNode = {
       id: `n${Date.now()}`, // 노드 ID
       name: nodeData.name, // 노드 이름
@@ -80,28 +94,42 @@ export default function MainScreen() {
 
     // 카테고리, 노드 설정
     const nodesData = [
-      { id: 'me', shape: 'image', image: earthIMG, 
-        size: 150, x: 0, y: 0, fixed: true,
+      { 
+        id: 'me', shape: 'image', image: earthIMG, size: 150, 
+        // 초기 위치 (0, 0)
+        x: nodePositions['me']?.x || 0, 
+        y: nodePositions['me']?.y || 0, 
+        fixed: true,
         title: userName // tooltip으로 사용자 이름 표시
       },
       // C1, C2 임시 카테고리 (제외 상태)
       ...categories.filter(category => category.id !== 'c1' && category.id !== 'c2').map(category => ({
-        id: category.id, label: category.name,
+        id: category.id, 
+        label: category.name,
         shape: 'icon', // 아이콘으로 카테고리 표시
         icon: {
           face: 'FontAwesome',
           code: '\uf06c', // FontAwesome 나뭇잎 아이콘
-          size: 100, color: category.color
+          size: 100, 
+          color: category.color
         },
-         // 아이콘 위 쓰이는 글자 설정
-        x: category.x, y: category.y, fixed: false,
+        // 현재 위치가 있으면 사용, 없으면 초기 위치 사용
+        x: nodePositions[category.id]?.x || category.x, 
+        y: nodePositions[category.id]?.y || category.y, 
+        fixed: false,
         font: { size: 20, color: 'black', vadjust: -60, bold: true }
       })),
       // 노드는 flowerIMG로 생성
       ...nodes.map(node => ({
-        id: node.id, label: node.name, shape: 'image', image: flowerIMG, size: 50,
-        // 아이콘 위 쓰이는 글자 설정
-        x: node.x, y: node.y, fixed: false,
+        id: node.id, 
+        label: node.name, 
+        shape: 'image', 
+        image: flowerIMG, 
+        size: 50,
+        // 현재 위치가 있으면 사용, 없으면 초기 위치 사용
+        x: nodePositions[node.id]?.x || node.x, 
+        y: nodePositions[node.id]?.y || node.y, 
+        fixed: false,
         font: { size: 20, color: 'black', vadjust: -70, bold: true }
       }))
     ];
@@ -151,6 +179,13 @@ export default function MainScreen() {
     const network = new Network(networkRef.current, data, options);
     networkInstance.current = network;
 
+    // 드래그 종료 시 위치 업데이트
+    network.on('dragEnd', function (params) {
+      if (params.nodes.length > 0) {
+        updateNodePositions();
+      }
+    });
+
     network.on('click', function (params) { // 노드 클릭 시, 실행
       if (params.nodes.length > 0) { // 클릭된 노드의 ID 가져옴
         const nodeId = params.nodes[0];
@@ -184,7 +219,7 @@ export default function MainScreen() {
         networkInstance.current.destroy();
       }
     };
-  }, [categories, nodes, userName]);
+  }, [categories, nodes, userName, nodePositions]);
 
   return (
     <div className="main-screen">
