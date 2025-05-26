@@ -1,13 +1,18 @@
 /* === 기본 래퍼 === */
 .memory-wrapper {
   width: 1000px;
-  margin: 2rem auto;
+  margin: 1rem auto;
   display: flex;
   flex-direction: column;
-  background-color: #f9f9f4;
-  border: 1px solid #b0b0b0;
   border-radius: 12px;
   font-family: "sans-serif";
+}
+
+.location_path {
+  font-size: 20px;
+  font-style: italic;
+  color: #1d3b2a;
+  font-weight: 900;
 }
 
 /* === 헤더 === */
@@ -16,223 +21,250 @@
   border-bottom: 1px solid #ccc;
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  gap: 0.5rem;
 }
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-
-.memory-header h1 {
-  font-size: 28px;
-  font-style: italic;
-  color: #1d3b2a;
-  font-weight: bold;
-}
-
 .memory-header .date {
-  font-size: 12px;
+  font-size: 20px;
   color: #888;
   font-style: italic;
 }
 
-.edit-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  margin-left: 1rem;
-  color: #666;
-  transition: color 0.2s;
-}
-.edit-btn:hover {
+.memory-header h1 {
+  font-size: 50px;
+  font-style: italic;
   color: #1d3b2a;
+  font-weight: 900;
+  align-items: center;
 }
 
-/* === 본문 영역 === */
-.memory-body {
+.memory-container {
   display: flex;
-  padding: 2rem;
-  gap: 2rem;
+  height: 100vh;
+  background-color: #f8f5ef;
+  font-family: "Arial", sans-serif;
 }
 
-/* 왼쪽 영역 */
-.memory-left {
+.left-panel {
+  position: relative;
   width: 30%;
+  background-color: #b8cabc;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #b9cdb9;
-  border-radius: 12px;
-  padding: 1.5rem;
 }
 
-/* 프로필 영역 */
-.profile {
-  width: 120px;
-  height: 120px;
+.Star {
+  font-size: 40px;
+  color: black;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  margin-bottom: 10px;
+  cursor: pointer;
+  align-self: flex-start; /* 💡 핵심: 부모가 flex일 때 왼쪽 정렬 */
+  margin-left: 10px;
+}
+.Star:hover {
+  color: rgb(65, 65, 65);
+}
+
+.Star.clicked {
+  color: rgb(221, 158, 41);
+}
+.heart-wrapper {
+  position: absolute;
+  top: 32px;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.heart-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.heart-edit-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  border: 1px solid #888;
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.heart-edit-btn:hover {
+  background-color: #444;
+  color: white;
+}
+
+.profile-photo {
+  width: 250px;
+  height: 250px;
+  background-color: #cbd5cd;
   border-radius: 50%;
-  background-color: #eeeeee;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-style: italic;
-  font-size: 16px;
-  color: #555;
-  border: 2px dashed #7e9f8c;
   overflow: hidden;
-  margin-bottom: 1rem;
 }
 
-.profile img {
+.profile-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
-/* 감정 레벨 */
-.emotion-status {
-  margin-bottom: 1rem;
-  font-size: 14px;
-  color: #a02020;
+.photo-upload-label {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
+  color: #444;
+  position: relative;
 }
 
-/* 노트 */
-.note {
-  font-size: 14px;
-  margin-bottom: 0.5rem;
-  color: #333;
+.photo-upload-label:hover {
+  opacity: 0.8;
+}
+
+.photo-input {
+  display: none;
+}
+
+.profile-info-list {
+  width: 90%;
+  margin-top: 10px;
+}
+
+.info-row {
+  display: flex;
+  background-color: #e6ece5;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.info-label {
+  width: 40%;
+  background-color: #f5f7f3;
+  padding: 6px;
+  font-style: italic;
+  color: #444;
   text-align: center;
 }
 
-/* 오른쪽 영역 */
-.memory-right {
-  flex: 1;
+.info-value {
+  width: 60%;
+  padding: 6px;
+  font-weight: 150;
+  color: #5e5757;
+}
+
+.add-profile-button {
+  margin-top: 12px;
+  padding: 6px 150px;
+  background-color: #616962;
+  color: white;
+  border: none;
+  display: flex;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.right-panel {
+  width: 70%;
+  padding: 80px;
+  background-color: #f1f1e7;
   display: flex;
   flex-direction: column;
 }
 
-/* 경로 */
-.memory-path {
-  font-size: 14px;
-  color: #444;
-  margin-bottom: 1rem;
-  font-style: italic;
-}
-
-/* 타임라인 */
-.timeline-section {
-  border: 1px solid #cfcfcf;
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 1rem;
-  flex: 1;
+.header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.header h2 {
+  font-size: 40px;
 }
 
-.timeline-header {
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 1rem;
+.edit-button {
+  position: absolute;
+  top: 18rem;
+  right: 3rem;
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
 }
 
-.timeline-list {
-  flex: 1;
-  overflow-y: auto;
+.note ul {
+  margin-left: 20px;
+}
+
+.timeline {
+  margin-top: 30px;
 }
 
 .timeline-item {
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  background-color: #f0f4f1;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #333;
-}
-
-/* 추가 버튼 */
-.add-timeline {
-  margin-top: 1rem;
-  align-self: center;
-  padding: 0.5rem 1rem;
-  font-size: 14px;
-  border: none;
-  background-color: #7e9f8c;
-  color: white;
+  background-color: white;
+  color: #444;
+  padding: 10px;
+  margin-bottom: 8px;
   border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  border: 1px solid #739375;
 }
 
-.add-timeline:hover {
-  background-color: #507060;
-}
-
-/* extra button */
-.extra-info {
-  margin-top: 1rem;
-  width: 100%;
-  font-size: 13px;
-  color: #333;
-}
-.info-item {
-  background-color: #f0f0f0;
-  border-radius: 4px;
-  padding: 0.3rem 0.6rem;
-  margin-bottom: 0.4rem;
-  text-align: left;
-  font-style: italic;
-}
-
-.edit-toggle {
-  margin-left: 1rem;
-  padding: 0.3rem 0.7rem;
-  font-size: 14px;
-  background-color: #f0f0f0;
-  border: 1px solid #aaa;
+.add-button {
+  margin-top: 10px;
+  padding: 8px 450px;
+  background-color: #616962;
+  color: white;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 1.2rem;
 }
 
-.edit-toggle:hover {
-  background-color: #ddd;
+/* return 버튼 */
+.return-button-wrap {
+  margin-top: 1.5rem;
 }
 
-.upload-input {
-  margin-top: 0.5rem;
-}
-
-.edit-icon {
+.return-btn {
+  position: absolute;
+  top: 2rem;
+  right: 3rem;
+  color: #7e9f8c;
+  font-size: 40px;
   background: none;
   border: none;
-  font-size: 14px;
-  margin-left: 5px;
   cursor: pointer;
+  align-self: flex-start; /* 💡 핵심: 부모가 flex일 때 왼쪽 정렬 */
+  margin-left: 900px;
 }
 
-.edit-notes-btn {
-  margin-top: 0.5rem;
-  font-size: 12px;
-  background-color: transparent;
-  color: #555;
-  border: 1px dashed #888;
-  border-radius: 5px;
-  padding: 2px 6px;
-  cursor: pointer;
-}
-
-.edit-icon {
-  background: none;
-  border: none;
-  margin-left: 0.5rem;
-  font-size: 16px;
-  cursor: pointer;
-  color: #555;
-}
-
-.edit-icon:hover {
-  color: #000;
+.return-btn:hover {
+  color: #fff;
 }
