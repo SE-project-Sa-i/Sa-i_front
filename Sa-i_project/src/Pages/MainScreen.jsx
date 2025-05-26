@@ -48,6 +48,102 @@ export default function MainScreen() {
     }
   };
 
+  // 겹치지 않는 위치 찾음
+  const findNonOverlappingPosition = (existingItems, itemType = 'node', targetCategory = null) => {
+    const minDistance = 200; // 최소 간격
+    const maxAttempts = 50; // 최대 시도 횟수
+    // earthIMG 중심 좌표
+    const centerX = nodePositions['me']?.x || 0;
+    const centerY = nodePositions['me']?.y || 0;
+    // 노드인 경우, 자신이 속한 카테고리 방향으로 위치 설정
+    if (itemType === 'node' && targetCategory) {
+      const category = categories.find(cat => cat.name === targetCategory);
+      if (category) {
+        // 카테고리 현재 위치
+        const categoryX = nodePositions[category.id]?.x || category.x || 0;
+        const categoryY = nodePositions[category.id]?.y || category.y || 0;
+        // 중심점에서 카테고리로의 방향 벡터
+        const directionX = categoryX - centerX;
+        const directionY = categoryY - centerY;
+        const directionLength = Math.sqrt(directionX * directionX + directionY * directionY);
+        if (directionLength > 0) {
+          // 방향 벡터 정규화
+          const normalizedX = directionX / directionLength;
+          const normalizedY = directionY / directionLength;
+          // 카테고리에서 떨어진 위치에 노드 배치
+          const baseDistance = directionLength + 100; // 카테고리에서 100px 멀리
+          for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            // 거리 점진적 증가 (50px씩)
+            const currentDistance = baseDistance + (Math.floor(attempt / 4) * 50);
+            // 각도 변경하며 부채꼴 모양으로 노드의 위치 설정
+            const angleVariation = (attempt % 4 - 1.5) * 0.3; // -0.45 ~ +0.45 라디안
+            const currentAngle = Math.atan2(normalizedY, normalizedX) + angleVariation;
+            const x = centerX + Math.cos(currentAngle) * currentDistance;
+            const y = centerY + Math.sin(currentAngle) * currentDistance;
+            // 기존 아이템들과의 거리
+            let isValidPosition = true;
+            for (const item of existingItems) {
+              const itemX = nodePositions[item.id]?.x || item.x || 0;
+              const itemY = nodePositions[item.id]?.y || item.y || 0;
+              const distance = Math.sqrt(
+                Math.pow(x - itemX, 2) + Math.pow(y - itemY, 2)
+              );
+              if (distance < minDistance) {
+                isValidPosition = false;
+                break;
+              }
+            }
+            if (isValidPosition) {
+              return { x, y };
+            }
+          }
+        }
+      }
+    }
+    
+    // 카테고리거나 노드의 카테고리 찾지 못한 경우, 기존 로직
+    const baseRadius = itemType === 'category' ? 200 : 350; // 노드는 350px에서 시작
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      // 각도 변경하며 원 모양으로 카테고리의 위치 설정
+      const radiusStep = Math.floor(attempt / 8); // 8개씩 한 원에 배치
+      const angleStep = (attempt % 8) * (Math.PI / 4); // 45도씩 8방향
+      const currentRadius = baseRadius + (radiusStep * 100); // 100px씩 반지름 증가
+      const x = centerX + Math.cos(angleStep) * currentRadius;
+      const y = centerY + Math.sin(angleStep) * currentRadius;
+      // 기존 아이템들과의 거리 확인
+      let isValidPosition = true;
+      for (const item of existingItems) {
+        const itemX = nodePositions[item.id]?.x || item.x || 0;
+        const itemY = nodePositions[item.id]?.y || item.y || 0;
+        const distance = Math.sqrt(
+          Math.pow(x - itemX, 2) + Math.pow(y - itemY, 2)
+        );
+        if (distance < minDistance) {
+          isValidPosition = false;
+          break;
+        }
+      }
+      // 중심 노드와의 최소 거리
+      const distanceFromCenter = Math.sqrt(
+        Math.pow(x - centerX, 3) + Math.pow(y - centerY, 2)
+      );
+      if (distanceFromCenter < baseRadius - 50) { // 기본 반지름보다 50px 가까우면 제외
+        isValidPosition = false;
+      }
+      if (isValidPosition) {
+        return { x, y };
+      }
+    }
+
+    // 적절한 위치를 찾지 못한 경우 기본 위치 반환 (원형 배치)
+    const fallbackAngle = Math.random() * Math.PI * 2;
+    const fallbackRadius = itemType === 'category' ? 250 : 400;
+    return { 
+      x: centerX + Math.cos(fallbackAngle) * fallbackRadius, 
+      y: centerY + Math.sin(fallbackAngle) * fallbackRadius 
+    };
+  };
+
   // 노드 데이터 업데이트
   const handleNodeUpdate = (updatedNodeData) => {
     updateNodePositions(); // 노드 위치 저장
@@ -58,20 +154,26 @@ export default function MainScreen() {
   // 카테고리 추가
   const handleCategoryCreated = (categoryData) => {
     updateNodePositions(); // 카테고리 추가 전 현재 위치 저장
+    // 기존 아이템의 위치 정보
+    const existingItems = [...categories, ...nodes];
+    const position = findNonOverlappingPosition(existingItems, 'category');
     const newCategory = {
       id: `c${Date.now()}`, // 카테고리 ID
       name: categoryData.name, // 카테고리 이름
       color: categoryData.color, // 카테고리 색상
       parentCategory: categoryData.parentCategory, // 상위 카테고리
-      x: Math.random() * 400 + 200, y: Math.random() * 400 - 200 // 카테고리 랜덤 위치
+      x: position.x, // 겹치지 않는 X 위치
+      y: position.y  // 겹치지 않는 Y 위치
     };
     setCategories(prev => [...prev, newCategory]); // 카테고리 목록에 추가
   };
 
-  // 노드 추가
+  // 노드 추가 (수정된 버전)
   const handleNodeCreated = (nodeData) => {
-    // 노드 추가 전 현재 위치 저장
-    updateNodePositions();
+    updateNodePositions(); // 노드 추가 전 현재 위치 저장
+    // 기존 아이템의 위치 정보
+    const existingItems = [...categories, ...nodes];
+    const position = findNonOverlappingPosition(existingItems, 'node', nodeData.category);
     const newNode = {
       id: `n${Date.now()}`, // 노드 ID
       name: nodeData.name, // 노드 이름
@@ -79,7 +181,8 @@ export default function MainScreen() {
       intro: nodeData.intro, // 노드 소개
       note: nodeData.note, // 노드 설명
       favorites: nodeData.favorites, // 노드 즐겨찾기
-      x: Math.random() * 400 + 400, y: Math.random() * 400 - 200 // 노드 랜덤 위치
+      x: position.x, // 겹치지 않는 X 위치
+      y: position.y  // 겹치지 않는 Y 위치
     };
     setNodes(prev => [...prev, newNode]); // 노드 목록에 추가
   };
@@ -170,7 +273,7 @@ export default function MainScreen() {
       edges: { color: '#507060', width: 3 } // 엣지 설정
     };
 
-    // 기존 네트워크가 있으면 제거
+    // 기존 네트워크 있으면 제거
     if (networkInstance.current) {
       networkInstance.current.destroy();
     }
