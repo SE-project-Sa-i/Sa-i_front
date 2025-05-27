@@ -3,6 +3,7 @@ html, body, #root {
   padding: 0;
   height: 100%;
   background-color: #F8F2F0;
+  font-family: sans-serif;
 }
 
 input::placeholder {
@@ -10,16 +11,8 @@ input::placeholder {
   opacity: 1; /* 진한 정도 */
 }
 
-.category-input::placeholder {
-  color: #85A394;
-  opacity: 1;
-}
-
-.name-input::placeholder {
-  color: #85A394;
-  opacity: 1;
-}
-
+.category-input::placeholder,
+.name-input::placeholder,
 .intro2-input::placeholder {
   color: #85A394;
   opacity: 1;
