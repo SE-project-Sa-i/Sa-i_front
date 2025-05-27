@@ -1,0 +1,156 @@
+.user-card { /* UserCard 화면 */
+  position: absolute;
+  background-color: #9BB4A0A6;
+  border-radius: 1rem;
+  padding: 1rem;
+  font-family: sans-serif;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* 다른 UI 위에 올라오도록 */
+}
+
+.card-header { /* 상단: 이름 + 하트 + 등록일 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.card-name-heart { /* 이름 */
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.card-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background-color: #405E4F;
+  padding: 0.5rem 2rem;
+  border-radius: 0.3rem;
+}
+
+.heart-group { /* 하트 */
+  display: flex;
+  gap: 0.2rem;
+  cursor: pointer;
+}
+
+.heart-percent {
+  font-style: italic;
+  color: black;
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.card-date { /* 등록일 */
+  background-color: transparent;
+  color: #405E4F;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  font-style: italic;
+  width: 100px;
+  cursor: text;
+  margin-left: 20px;
+}
+
+.card-body { /* 좌측: 프로필 + 즐겨찾기 */
+  display: flex;
+  gap: 0.8rem;
+}
+
+.profile-section { /* 프로필 */
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.star-icon { /* 즐겨찾기 */
+  position: absolute; /* 프로필 기준 절대 위치 */
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.intro-note { /* 우측: Introduction + Note */
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.intro-box { /* Introduction */
+  background-color: #45454599;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  margin-bottom: 0rem;
+}
+
+.intro-label {
+  font-style: italic;
+  color: white;
+  font-weight: bold;
+}
+
+.intro-input {
+  background-color: transparent;
+  color: white;
+  width: 100%;
+  padding: 0rem;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: text;
+}
+
+.note-box { /* Note */
+  background-color: #FFFFFF99;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.note-label {
+  font-style: italic;
+  color: #706D6D;
+  font-weight: bold;
+}
+
+.note-textarea {
+  background-color: transparent;
+  color: #706D6D;
+  width: 100%;
+  padding: 0rem;
+  border: none;
+  border-radius: 0.3rem;
+  font-family: inherit;
+  cursor: text;
+}
+
+.card-footer { /* 하단: 버튼 */
+  margin-top: 0rem;
+}
+
+.view-button {
+  background-color: #85A394;
+  color: white;
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 0.3rem;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
