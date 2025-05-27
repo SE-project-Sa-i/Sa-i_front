@@ -8,6 +8,7 @@ import Welcome from "./pages/Welcome";
 import UserSetting from "./pages/UserSetting";
 import DeleteAccount from "./pages/DeleteAccount";
 import Memory from "./pages/Memory";
+import MainScreen from './Pages/MainScreen';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           />
         }
       />
+      <Route path="/Main" element={<MainScreen />} /> {/* soobin 브랜치 내용 포함 */}
     </Routes>
   );
 }
