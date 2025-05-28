@@ -7,7 +7,8 @@ export default function NodeCreateComplete_2() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/'); // 홈으로 이동
+    // 클릭 시, 초기 메인 화면으로 이동해 노드 생성 안되는 것처럼 보임
+    navigate('/MainScreen');
   };
 
   return (

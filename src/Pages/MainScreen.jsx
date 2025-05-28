@@ -15,6 +15,8 @@ import AddPopup from '../Component/AddPopup';
 import SearchPopup from '../Component/SearchPopup';
 // MainScreen 디자인 불러오기
 import './MainScreen.css';
+// 페이지 이동
+import { useNavigate } from 'react-router-dom';
 
 export default function MainScreen() {
   const networkRef = useRef(null);
@@ -39,6 +41,10 @@ export default function MainScreen() {
   const [userName, setUserName] = useState("Soobin's Network");
   // 노드의 현재 위치 저장
   const [nodePositions, setNodePositions] = useState({});
+  // 페이지 이동
+  const navigate = useNavigate();
+  // 방금 추가된 카테고리의 정보 잠깐 저장해 성공 화면으로 전환
+  const [pendingCategory, setPendingCategory] = useState(null);
 
   // 노드 위치 업데이트
   const updateNodePositions = () => {
@@ -165,7 +171,13 @@ export default function MainScreen() {
       x: position.x, // 겹치지 않는 X 위치
       y: position.y  // 겹치지 않는 Y 위치
     };
+    // 새로 만든 카테고리 정보 활용 위해 대기 상태로 저장
+    setPendingCategory({ data: newCategory, color: categoryData.color });
     setCategories(prev => [...prev, newCategory]); // 카테고리 목록에 추가
+    // 성공 화면으로 페이지 이동
+    navigate('/category-complete', {
+      state: { color: categoryData.color }
+    });
   };
 
   // 노드 추가 (수정된 버전)
@@ -185,6 +197,16 @@ export default function MainScreen() {
       y: position.y  // 겹치지 않는 Y 위치
     };
     setNodes(prev => [...prev, newNode]); // 노드 목록에 추가
+    // 즐겨찾기 할 때의 성공 화면
+    if (nodeData.favorites === true) {
+      navigate('/node-complete-favorite', {
+        state: {star: nodeData.star}
+      });
+    } else { // 즐겨찾기 안 할 때의 성공 화면
+      navigate('/node-complete', {
+        state: {star: nodeData.star}
+      });
+    }
   };
 
   useEffect(() => { // FontAwesome 아이콘
@@ -193,6 +215,18 @@ export default function MainScreen() {
       link.rel = 'stylesheet';
       link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
       document.head.appendChild(link);
+    }
+  }, []);
+
+  useEffect(() => { // 새로운 카테고리를 categories에 추가한 후, 성공 화면으로 이동
+    if (pendingCategory) {
+      const exists = categories.find(cat => cat.id === pendingCategory.data.id);
+      if (exists) {
+        navigate('/category-complete', {
+          state: { color: pendingCategory.color }
+        });
+        setPendingCategory(null);
+      }
     }
 
     // 카테고리, 노드 설정

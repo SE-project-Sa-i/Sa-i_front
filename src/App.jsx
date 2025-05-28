@@ -9,6 +9,9 @@ import UserSetting from "./Pages/UserSetting";
 import DeleteAccount from "./Pages/DeleteAccount";
 import Memory from "./Pages/Memory";
 import MainScreen from './Pages/MainScreen';
+import CategoryCreateComplete from "./Pages/CategoryCreateComplete";
+import NodeCreateComplete_1 from "./Pages/NodeCreateComplete_1";
+import NodeCreateComplete_2 from './Pages/NodeCreateComplete_2';
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
       <Route path="/usersetting" element={<UserSetting />} />
       <Route path="/DeleteAccount" element={<DeleteAccount />} />
       <Route path="/MainScreen" element={<MainScreen />} />
+      <Route path="/category-complete" element={<CategoryCreateComplete />} />
+      <Route path="/node-complete" element={<NodeCreateComplete_1 />} />
+      <Route path="/node-complete-favorite" element={<NodeCreateComplete_2 />} />
       <Route
         path="/Memory"
         element={

@@ -8,7 +8,7 @@ export default function CategoryCreateComplete_1() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/'); // 홈으로 이동
+    navigate('/MainScreen'); // 홈으로 이동
   };
 
   return (
