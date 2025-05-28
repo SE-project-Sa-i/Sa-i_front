@@ -89,7 +89,8 @@
 .add-button { /* 아래쪽 AddPopup 버튼 */
   position: fixed;
   bottom: 2rem;
-  left: 2rem;
+  left: -25rem;
+  background: transparent !important;
 }
 
 .add-button button {
