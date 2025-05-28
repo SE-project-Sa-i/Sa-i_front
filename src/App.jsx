@@ -1,0 +1,46 @@
+import "./App.css";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./Pages/Login";
+import SignIn from "./Pages/SignIn";
+import Signup from "./Pages/Signup";
+import Welcome from "./Pages/Welcome";
+import UserSetting from "./Pages/UserSetting";
+import DeleteAccount from "./Pages/DeleteAccount";
+import Memory from "./Pages/Memory";
+import MainScreen from './Pages/MainScreen';
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/SignIn" element={<SignIn />} />
+      <Route path="/Signup" element={<Signup />} />
+      <Route path="/Welcome" element={<Welcome />} />
+      <Route path="/usersetting" element={<UserSetting />} />
+      <Route path="/DeleteAccount" element={<DeleteAccount />} />
+      <Route path="/MainScreen" element={<MainScreen />} />
+      <Route
+        path="/Memory"
+        element={
+          <Memory
+            userName="김예서"
+            registerDate="2025/05/02"
+            profileImgUrl={null}
+            emotionLevel={75}
+            notes={[
+              "소프트웨어공학 강의에서 팀플",
+              "팀 회의하며 친해짐",
+              "협업과 채팅 즐거웠음",
+            ]}
+            timeline={["3월 첫 회의", "4월 발표 준비", "5월 발표 마무리"]}
+            isEditMode={true}
+          />
+        }
+      />
+      <Route path="/Main" element={<MainScreen />} /> {/* soobin 브랜치 내용 포함 */}
+    </Routes>
+  );
+}
+
+export default App;

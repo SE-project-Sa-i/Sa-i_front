@@ -1,0 +1,270 @@
+/* === 기본 래퍼 === */
+.memory-wrapper {
+  width: 1000px;
+  margin: 1rem auto;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  font-family: "sans-serif";
+}
+
+.location_path {
+  font-size: 20px;
+  font-style: italic;
+  color: #1d3b2a;
+  font-weight: 900;
+}
+
+/* === 헤더 === */
+.memory-header {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.memory-header .date {
+  font-size: 20px;
+  color: #888;
+  font-style: italic;
+}
+
+.memory-header h1 {
+  font-size: 50px;
+  font-style: italic;
+  color: #1d3b2a;
+  font-weight: 900;
+  align-items: center;
+}
+
+.memory-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f5ef;
+  font-family: "Arial", sans-serif;
+}
+
+.left-panel {
+  position: relative;
+  width: 30%;
+  background-color: #b8cabc;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Star {
+  font-size: 40px;
+  color: black;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  margin-bottom: 10px;
+  cursor: pointer;
+  align-self: flex-start; /* 💡 핵심: 부모가 flex일 때 왼쪽 정렬 */
+  margin-left: 10px;
+}
+.Star:hover {
+  color: rgb(65, 65, 65);
+}
+
+.Star.clicked {
+  color: rgb(221, 158, 41);
+}
+.heart-wrapper {
+  position: absolute;
+  top: 32px;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.heart-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.heart-edit-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  border: 1px solid #888;
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.heart-edit-btn:hover {
+  background-color: #444;
+  color: white;
+}
+
+.profile-photo {
+  width: 250px;
+  height: 250px;
+  background-color: #cbd5cd;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.photo-upload-label {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #444;
+  position: relative;
+}
+
+.photo-upload-label:hover {
+  opacity: 0.8;
+}
+
+.photo-input {
+  display: none;
+}
+
+.profile-info-list {
+  width: 90%;
+  margin-top: 10px;
+}
+
+.info-row {
+  display: flex;
+  background-color: #e6ece5;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.info-label {
+  width: 40%;
+  background-color: #f5f7f3;
+  padding: 6px;
+  font-style: italic;
+  color: #444;
+  text-align: center;
+}
+
+.info-value {
+  width: 60%;
+  padding: 6px;
+  font-weight: 150;
+  color: #5e5757;
+}
+
+.add-profile-button {
+  margin-top: 12px;
+  padding: 6px 150px;
+  background-color: #616962;
+  color: white;
+  border: none;
+  display: flex;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.right-panel {
+  width: 70%;
+  padding: 80px;
+  background-color: #f1f1e7;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header h2 {
+  font-size: 40px;
+}
+
+.edit-button {
+  position: absolute;
+  top: 18rem;
+  right: 3rem;
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.note ul {
+  margin-left: 20px;
+}
+
+.timeline {
+  margin-top: 30px;
+}
+
+.timeline-item {
+  background-color: white;
+  color: #444;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: 1px solid #739375;
+}
+
+.add-button {
+  margin-top: 10px;
+  padding: 8px 450px;
+  background-color: #616962;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+/* return 버튼 */
+.return-button-wrap {
+  margin-top: 1.5rem;
+}
+
+.return-btn {
+  position: absolute;
+  top: 2rem;
+  right: 3rem;
+  color: #7e9f8c;
+  font-size: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  align-self: flex-start; /* 💡 핵심: 부모가 flex일 때 왼쪽 정렬 */
+  margin-left: 900px;
+}
+
+.return-btn:hover {
+  color: #fff;
+}

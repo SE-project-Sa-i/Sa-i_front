@@ -1,0 +1,62 @@
+.page-center {
+  height: 95vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.wrapper {
+  /*width: px;*/
+  padding: 2rem;
+  margin: 4rem auto;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+.comment h1 {
+  color: rgb(17, 69, 36);
+  font-size: 200px;
+  font-style: italic;
+  font-weight: 900;
+  -webkit-text-stroke: 10px rgb(17, 69, 36);
+  text-align: center;
+  margin: 0;
+}
+.comment h2 {
+  color: rgb(17, 69, 36);
+  font-size: 50px;
+  font-style: italic;
+  font-weight: 900;
+  text-align: center;
+  margin: 0;
+}
+.comment h3 {
+  color: rgb(66, 69, 67);
+  font-size: 40px;
+  font-style: italic;
+  font-weight: 900;
+  text-align: center;
+  margin: 0;
+}
+
+/* Back to Login page 버튼 */
+.back-button-wrap {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.signup-btn {
+  padding: 0.75rem 5rem;
+  font-style: italic;
+  border: 1px solid #507060;
+  border-radius: 25px;
+  background-color: #ffffff;
+  color: #507060;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.signup-btn:hover {
+  background-color: #85a394;
+  color: #ffffff;
+}
