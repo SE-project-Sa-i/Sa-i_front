@@ -5,6 +5,7 @@ import { FaHeart } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 import { GiRoundStar } from "react-icons/gi";
 import "./Memory.css";
+//만약 로그인 되어있는 상태라면 홈 버튼 눌렀을 때 main screen으로 빠지기. 지금은 sign up 페이지로 감;;
 
 function Memory() {
   const [editMode, setEditMode] = useState(false);

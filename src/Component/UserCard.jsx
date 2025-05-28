@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Star, CircleUserRound } from 'lucide-react';
 // UserCard 디자인 불러오기
+import { useNavigate } from 'react-router-dom';
 import './UserCard.css';
 
 // visible: 보여줄지 여부
@@ -21,6 +22,8 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
   const [registeredDate, setRegisteredDate] = useState('');
   // 사용자 이름 (nodeData.name 기준)
   const [displayName, setDisplayName] = useState('');
+  //이동 함수 
+  const navigate = useNavigate();
 
   // 데이터 변경 시, MainScreen에 알려줌
   const handleDataChange = (field, value) => {
@@ -29,6 +32,7 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
       onNodeUpdate(updatedData);
     }
   };
+
 
   useEffect(() => { // nodeData 변경 시, UserCard 업데이트
     if (nodeData) {
@@ -126,7 +130,7 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
       </div>
 
       <div className="card-footer">
-        <button className="view-button">View More Memories</button>
+        <button className="view-button" onClick={() => navigate("/Memory")}>View More Memories</button>
       </div>
     </div>
   );
