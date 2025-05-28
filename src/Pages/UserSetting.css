@@ -1,0 +1,70 @@
+.page-center-col {
+  height: 100vh;
+  display: flex;
+  flex-direction: column; /* 세로 방향 정렬 */
+  align-items: center; /* 수평 가운데 */
+  justify-content: center; /* 전체 수직 가운데 */
+  gap: 1rem; /* 위아래 간격 */
+}
+
+.comment {
+  color: rgb(66, 69, 67);
+  font-size: 60px;
+  font-style: italic;
+  font-weight: 900;
+  text-align: center;
+  margin: 0;
+}
+
+.info-table {
+  border-collapse: collapse;
+  margin: 2rem auto;
+  font-family: sans-serif;
+  color: #6f6f6f;
+  font-style: italic;
+  font-size: 22px;
+}
+
+.info-table th,
+.info-table td {
+  padding: 1rem 2rem;
+  text-align: left;
+}
+
+.info-table th {
+  font-weight: 400;
+}
+
+.info-table td {
+  font-weight: 300;
+}
+
+.info-table tr:not(:last-child) {
+  border-bottom: 5px solid transparent;
+}
+
+.info-table {
+  border-left: 1px solid #999;
+}
+
+.DeleteSet {
+  font-weight: 400;
+  color: #b61313;
+}
+
+.del-btn1 {
+  padding: 0.75rem 5rem;
+  font-style: italic;
+  border: 1px solid #a02020;
+  border-radius: 25px;
+  background-color: #ffffff;
+  color: #a02020;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.del-btn1:hover {
+  background-color: #a02020;
+  color: #fff;
+}
