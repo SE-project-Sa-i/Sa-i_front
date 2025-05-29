@@ -45,6 +45,12 @@ export default function MainScreen() {
   const navigate = useNavigate();
   // 방금 추가된 카테고리의 정보 잠깐 저장해 성공 화면으로 전환
   const [pendingCategory, setPendingCategory] = useState(null);
+  //우상단 아이콘 Path 지정
+  const iconButtons = [
+    { Icon: User, path: "/userSettig" },
+    { Icon: List, path: "/categoryList" },
+    { Icon: BookUser, path: "/peopleList" },
+  ];
 
   // 노드 위치 업데이트
   const updateNodePositions = () => {
@@ -377,8 +383,10 @@ export default function MainScreen() {
           </div>
         </div>
         <div className="header-icons">
-          {[User, List, BookUser].map((Icon, idx) => (
-            <button key={idx}><Icon size={50} stroke="#507060" strokeWidth={3} /></button>
+          {iconButtons.map(({Icon, path}, idx) => (
+            <button key={idx} onClick={() => navigate(path)}>
+              <Icon size={50} stroke="#507060" strokeWidth={3} />
+            </button>
           ))}
         </div>
       </header>

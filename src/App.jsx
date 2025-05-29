@@ -12,6 +12,8 @@ import MainScreen from './Pages/MainScreen';
 import CategoryCreateComplete from "./Pages/CategoryCreateComplete";
 import NodeCreateComplete_1 from "./Pages/NodeCreateComplete_1";
 import NodeCreateComplete_2 from './Pages/NodeCreateComplete_2';
+import CategoryList from './Pages/Category';
+import PeopleList from './Pages/PeopleList';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
       <Route path="/category-complete" element={<CategoryCreateComplete />} />
       <Route path="/node-complete" element={<NodeCreateComplete_1 />} />
       <Route path="/node-complete-favorite" element={<NodeCreateComplete_2 />} />
+      <Route path="/categoryList" element={<CategoryList/>} />
+      <Route path="/peopleList" element={<PeopleList/>} />
       <Route
         path="/Memory"
         element={

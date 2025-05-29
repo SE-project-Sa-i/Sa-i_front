@@ -105,7 +105,7 @@ export default function Category() {
         <div className="flex justify-between items-center px-[5%] h-[10%] mb-2">
           <h2 className="category_text">Category</h2>
           <button
-            onClick={() => {navigate('/');
+            onClick={() => {navigate('/MainScreen');
               setVisible(false);}}
             className="text-gray-400 hover:text-gray-600 text-4xl"
           >
