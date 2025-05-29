@@ -33,10 +33,46 @@ export default function MainScreen() {
   const [searchVisible, setSearchVisible] = useState(false);
   // 검색창에 입력한 값
   const [searchQuery, setSearchQuery] = useState('');
-  // 사용자 생성 카테고리 목록
-  const [categories, setCategories] = useState([]);
-  // 사용자 생성 노드 목록
-  const [nodes, setNodes] = useState([]);
+  // 사용자 생성 카테고리 목록 (임시 카테고리 A, A-1, A-2)
+  const [categories, setCategories] = useState([
+    {
+      id: 'temp_a',
+      name: '카테고리 A',
+      color: '#507060',
+      parentCategory: null,
+      x: 250,
+      y: 0
+    },
+    {
+      id: 'temp_a1',
+      name: '카테고리 A-1',
+      color: '#85A394',
+      parentCategory: '카테고리 A',
+      x: 400,
+      y: -150
+    },
+    {
+      id: 'temp_a2',
+      name: '카테고리 A-2',
+      color: '#ACC0B6',
+      parentCategory: '카테고리 A',
+      x: 400,
+      y: 150
+    }
+  ]);
+  // 사용자 생성 노드 목록 (임시 노드 김철수)
+  const [nodes, setNodes] = useState([
+    {
+      id: 'temp_node1',
+      name: '김철수',
+      category: '카테고리 A-1',
+      intro: '안녕하세요',
+      note: '소프트웨어공학 5조입니다.',
+      favorites: true,
+      x: 550,
+      y: -150
+    }
+  ]);
   // 지구 아이콘 클릭 시, 사용자 이름 나타남
   const [userName, setUserName] = useState("Soobin's Network");
   // 노드의 현재 위치 저장

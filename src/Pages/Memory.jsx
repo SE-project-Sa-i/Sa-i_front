@@ -57,7 +57,7 @@ function Memory() {
 
   const handleReturn = (e) => {
     e.preventDefault();
-    navigate("/Signup"); // 클릭 시 "/Signup" 페이지로 이동ㅍ ------------ > 메인 페이지로 연결
+    navigate("/MainScreen"); // 클릭 시 "/Signup" 페이지로 이동 ------------ > 메인 페이지로 연결
   };
 
   return (
