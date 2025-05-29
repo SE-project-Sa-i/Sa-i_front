@@ -64,7 +64,7 @@ export default function PeopleList() {
           <button
             onClick={() => {
               setVisible(false);
-              navigate('/');}}
+              navigate('/MainScreen');}}
             className="text-gray-400 hover:text-gray-600 text-4xl">
             <IoClose />
           </button>
