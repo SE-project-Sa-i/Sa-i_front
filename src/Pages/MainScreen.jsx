@@ -83,7 +83,7 @@ export default function MainScreen() {
   const [pendingCategory, setPendingCategory] = useState(null);
   //우상단 아이콘 Path 지정
   const iconButtons = [
-    { Icon: User, path: "/userSettig" },
+    { Icon: User, path: "/userSetting" },
     { Icon: List, path: "/categoryList" },
     { Icon: BookUser, path: "/peopleList" },
   ];

@@ -30,6 +30,7 @@ function App() {
       <Route path="/node-complete-favorite" element={<NodeCreateComplete_2 />} />
       <Route path="/categoryList" element={<CategoryList/>} />
       <Route path="/peopleList" element={<PeopleList/>} />
+      <Route path="/userSetting" element={<UserSetting/>} />
       <Route
         path="/Memory"
         element={
