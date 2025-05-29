@@ -418,10 +418,14 @@ export default function MainScreen() {
             </button>
           </div>
         </div>
-        <div className="header-icons">
+        <div className="flex items-center gap-4 pr-8">
           {iconButtons.map(({Icon, path}, idx) => (
-            <button key={idx} onClick={() => navigate(path)}>
-              <Icon size={50} stroke="#507060" strokeWidth={3} />
+            <button
+              key={idx}
+              onClick={() => navigate(path)}
+              className="bg-[#F8F2F0] p-4 rounded-full cursor-pointer flex items-center justify-center hover:bg-[#e6dfdc] transition"
+            >
+              <Icon size={50} stroke="#507060" strokeWidth={3} className="align-middle"/>
             </button>
           ))}
         </div>
@@ -432,9 +436,12 @@ export default function MainScreen() {
         <UserCard visible={cardVisible} x={cardPosition.x} y={cardPosition.y} nodeData={clickedNodeData} onNodeUpdate={handleNodeUpdate} onClose={() => setCardVisible(false)} />
       </div>
 
-      <div className="add-button">
-        <button onClick={() => setPopupVisible(true)}>
-          <SquarePlus size={40} stroke="#507060" strokeWidth={3} />
+      <div className="flex items-center justify-start p-4">
+        <button
+          onClick={() => setPopupVisible(true)}
+          className="bg-[#F8F2F0] p-4 rounded-full cursor-pointer flex items-center justify-start hover:bg-[#e6dfdc] transition"
+        >
+          <SquarePlus size={40} stroke="#507060" strokeWidth={3} className="self-start" />
         </button>
       </div>
 

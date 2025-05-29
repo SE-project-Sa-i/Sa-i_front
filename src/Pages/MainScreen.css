@@ -75,6 +75,10 @@
   border: none;
   padding: 1.5rem;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .network-container { /* 그래프 (지구 + 카테고리 + 노드) */
