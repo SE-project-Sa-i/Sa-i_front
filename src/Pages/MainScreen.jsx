@@ -74,7 +74,7 @@ export default function MainScreen() {
     }
   ]);
   // 지구 아이콘 클릭 시, 사용자 이름 나타남
-  const [userName, setUserName] = useState("Soobin's Network");
+  const [userName, setUserName] = useState("Yeseo's Network");
   // 노드의 현재 위치 저장
   const [nodePositions, setNodePositions] = useState({});
   // 페이지 이동
