@@ -20,6 +20,7 @@ export default function SearchPopup({ visible, onClose, searchQuery, nodes = [],
     node.name && node.name.toLowerCase().includes(queryText.toLowerCase())
   );
 
+  /*
   // Introduction이나 Note의 키워드 검색
   const filteredKeywordNodes = nodes.filter((node) => {
     const query = queryText.toLowerCase();
@@ -28,6 +29,7 @@ export default function SearchPopup({ visible, onClose, searchQuery, nodes = [],
       (node.note && node.note.toLowerCase().includes(query))
     );
   });
+  */
 
   // 카테고리 계층 구조 표시
   const renderCategoryHierarchy = (person) => {
@@ -191,6 +193,7 @@ export default function SearchPopup({ visible, onClose, searchQuery, nodes = [],
           </div>
 
           {/* 키워드 검색 결과 */}
+          {/*}
           <div>
             <div style={{
               display: 'flex', justifyContent: 'flex-end', color: '#353535',
@@ -211,10 +214,14 @@ export default function SearchPopup({ visible, onClose, searchQuery, nodes = [],
                       marginBottom: '0.8rem', boxShadow: '0 20px 20px rgba(0,0,0,0.1)'
                     }}
                   >
+                  */}
                     {/* 이름 표시 */}
+                    {/*}
                     <h4 style={{ margin: 0, fontWeight: 'bold', fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                       {person.name}
+                      */}
                       {/* 계층 표시 */}
+                      {/*}
                       <span style={{
                         fontSize: '1rem', color: '#405E4F', display: 'flex',
                         alignItems: 'center', gap: '0.3rem', fontWeight: 'normal'
@@ -222,19 +229,25 @@ export default function SearchPopup({ visible, onClose, searchQuery, nodes = [],
                         {resolveCategoryPath(person.category, allCategories).map((cat, i, arr) => (
                           <React.Fragment key={i}>
                             {cat}
+                            */}
                             {/* 계층 표시 시, 구분자 나타냄 */}
+                            {/*}
                             {i < arr.length - 1 && <ChevronRight size={18} color="#405E4F" />}
                           </React.Fragment>
                         ))}
                       </span>
                     </h4>
+                    */}
                     {/* Introduction의 키워드 표시 */}
+                    {/*}
                     {person.intro?.toLowerCase().includes(queryText.toLowerCase()) && (
                       <p style={{ margin: '0.3rem 0', color: '#405E4F', fontSize: '1rem' }}>
                         <strong>Intro:</strong> {person.intro}
                       </p>
                     )}
+                    */}
                     {/* Note의 키워드 표시 */}
+                    {/*
                     {person.note?.toLowerCase().includes(queryText.toLowerCase()) && (
                       <p style={{ margin: '0.3rem 0', color: '#405E4F', fontSize: '1rem' }}>
                         <strong>Note:</strong> {person.note}
@@ -254,6 +267,7 @@ export default function SearchPopup({ visible, onClose, searchQuery, nodes = [],
               )}
             </div>
           </div>
+          */}
         </div>
       </div>
     </div>

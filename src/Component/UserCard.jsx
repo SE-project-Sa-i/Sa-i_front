@@ -134,13 +134,15 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
       if (nodeData.date) { // 등록일 자동 생성
         setRegisteredDate(nodeData.date);
       }
-      // else {
-      //  const now = new Date();
-      //  const koreaTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
-      //  const dateStr = koreaTime.toISOString().split('T')[0]; // YYYY-MM-DD 형식
-      //  setRegisteredDate(dateStr);
-      //  handleDataChange('date', dateStr); // MainScreen에 알려줌
-      //}
+      /*
+      else {
+      const now = new Date();
+      const koreaTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+      const dateStr = koreaTime.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+      setRegisteredDate(dateStr);
+      handleDataChange('date', dateStr); // MainScreen에 알려줌
+      }
+      */
     } else { // nodeData 없어 초기화
       setDisplayName('');
       setIntroText('');
