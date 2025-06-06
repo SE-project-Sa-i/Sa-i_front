@@ -33,48 +33,12 @@ export default function MainScreen() {
   const [searchVisible, setSearchVisible] = useState(false);
   // 검색창에 입력한 값
   const [searchQuery, setSearchQuery] = useState('');
-  // 사용자 생성 카테고리 목록 (임시 카테고리 A, A-1, A-2)
-  const [categories, setCategories] = useState([
-    {
-      id: 'temp_a',
-      name: '카테고리 A',
-      color: '#507060',
-      parentCategory: null,
-      x: 250,
-      y: 0
-    },
-    {
-      id: 'temp_a1',
-      name: '카테고리 A-1',
-      color: '#85A394',
-      parentCategory: '카테고리 A',
-      x: 400,
-      y: -150
-    },
-    {
-      id: 'temp_a2',
-      name: '카테고리 A-2',
-      color: '#ACC0B6',
-      parentCategory: '카테고리 A',
-      x: 400,
-      y: 150
-    }
-  ]);
-  // 사용자 생성 노드 목록 (임시 노드 김철수)
-  const [nodes, setNodes] = useState([
-    {
-      id: 'temp_node1',
-      name: '김철수',
-      category: '카테고리 A-1',
-      intro: '안녕하세요',
-      note: '소프트웨어공학 5조입니다.',
-      favorites: true,
-      x: 550,
-      y: -150
-    }
-  ]);
+  // 사용자 생성 카테고리 목록
+  const [categories, setCategories] = useState([]);
+  // 사용자 생성 노드 목록
+  const [nodes, setNodes] = useState([]);
   // 지구 아이콘 클릭 시, 사용자 이름 나타남
-  const [userName, setUserName] = useState("Yeseo's Network");
+  const [userName, setUserName] = useState("My Network");
   // 노드의 현재 위치 저장
   const [nodePositions, setNodePositions] = useState({});
   // 페이지 이동
@@ -95,6 +59,88 @@ export default function MainScreen() {
       setNodePositions(positions);
     }
   };
+
+  useEffect(() => {
+    // API 연결
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/v1/home", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+        const data = await response.json();
+
+        if (data.resultType === 'SUCCESS' && data.success) {
+          const parsedCategories = [];
+          const parsedNodes = [];
+
+          const traverse = (node, parentName = null) => {
+            if (node.type === 'CATEGORY') {
+              parsedCategories.push({
+                id: `cat_${node.id}`,
+                originalId: node.id, // 원본 ID 보존
+                title: node.name, // AddPopup에서 사용하는 title 속성
+                name: node.name,
+                color: node.color,
+                parentCategory: parentName,
+                x: 0, y: 0
+              });
+
+              if (node.children && node.children.length > 0) {
+                node.children.forEach(child => traverse(child, node.name));
+              }
+            } else if (node.type === 'PERSON') {
+              parsedNodes.push({
+                id: `person_${node.id}`,
+                originalId: node.id, // 원본 ID 보존
+                name: node.name,
+                category: parentName,
+                intro: node.introduction || '',
+                note: node.note || '',
+                favorites: node.is_favorite || false,
+                x: 0, y: 0
+              });
+            }
+          };
+
+          data.success.forEach(root => traverse(root));
+
+          // 중앙 'me' 노드 위치 설정
+          setNodePositions({ me: { x: 0, y: 0 } });
+
+          // 각 카테고리/노드에 위치 지정
+          parsedCategories.forEach(cat => {
+            const pos = findNonOverlappingPosition([...parsedCategories, ...parsedNodes], 'category');
+            cat.x = pos.x;
+            cat.y = pos.y;
+          });
+          parsedNodes.forEach(node => {
+            const pos = findNonOverlappingPosition([...parsedCategories, ...parsedNodes], 'node', node.category);
+            node.x = pos.x;
+            node.y = pos.y;
+          });
+
+          // 상태 설정
+          setCategories(parsedCategories);
+          setNodes(parsedNodes);
+          setUserName("My Network");
+        } else if (data.resultType === 'FAIL') {
+          alert(`로드 실패: ${data.error?.reason || '알 수 없는 오류'}`);
+        } else {
+          alert('예상치 못한 응답 형식입니다.');
+        }
+      } catch (error) {
+        alert('데이터를 불러오는 중 오류가 발생했습니다.');
+      }
+    };
+
+    const token = localStorage.getItem("token");
+    if (token) fetchData();
+    else navigate('/login');
+  }, [navigate]);
 
   // 겹치지 않는 위치 찾음
   const findNonOverlappingPosition = (existingItems, itemType = 'node', targetCategory = null) => {
@@ -206,10 +252,12 @@ export default function MainScreen() {
     const existingItems = [...categories, ...nodes];
     const position = findNonOverlappingPosition(existingItems, 'category');
     const newCategory = {
-      id: `c${Date.now()}`, // 카테고리 ID
+      id: `cat_${Date.now()}`, // 카테고리 ID
+      originalId: categoryData.id, // 백엔드에서 받은 실제 ID
+      title: categoryData.name, // AddPopup에서 사용하는 title 속성
       name: categoryData.name, // 카테고리 이름
       color: categoryData.color, // 카테고리 색상
-      parentCategory: categoryData.parentCategory, // 상위 카테고리
+      parentCategory: categoryData.parentCategory, // 부모 카테고리 이름 저장
       x: position.x, // 겹치지 않는 X 위치
       y: position.y  // 겹치지 않는 Y 위치
     };
@@ -222,25 +270,27 @@ export default function MainScreen() {
     });
   };
 
-  // 노드 추가 (수정된 버전)
+  // 노드 추가
   const handleNodeCreated = (nodeData) => {
     updateNodePositions(); // 노드 추가 전 현재 위치 저장
     // 기존 아이템의 위치 정보
     const existingItems = [...categories, ...nodes];
     const position = findNonOverlappingPosition(existingItems, 'node', nodeData.category);
     const newNode = {
-      id: `n${Date.now()}`, // 노드 ID
+      id: `person_${Date.now()}`, // 노드 ID
+      originalId: nodeData.id, // 백엔드에서 받은 실제 ID
       name: nodeData.name, // 노드 이름
       category: nodeData.category, // 노드 카테고리
       intro: nodeData.intro, // 노드 소개
       note: nodeData.note, // 노드 설명
-      favorites: nodeData.favorites, // 노드 즐겨찾기
+      favorites: nodeData.is_favorite, // 노드 즐겨찾기
       x: position.x, // 겹치지 않는 X 위치
       y: position.y  // 겹치지 않는 Y 위치
     };
     setNodes(prev => [...prev, newNode]); // 노드 목록에 추가
+    const isFavorite = nodeData.is_favorite === true || nodeData.is_favorite === 1 || nodeData.is_favorite === "true";
     // 즐겨찾기 할 때의 성공 화면
-    if (nodeData.favorites === true) {
+    if (isFavorite) {
       navigate('/node-complete-favorite', {
         state: {star: nodeData.star}
       });
@@ -281,8 +331,8 @@ export default function MainScreen() {
         fixed: true,
         title: userName // tooltip으로 사용자 이름 표시
       },
-      // C1, C2 임시 카테고리 (제외 상태)
-      ...categories.filter(category => category.id !== 'c1' && category.id !== 'c2').map(category => ({
+      // 모든 카테고리 표시 (루트 카테고리 제외)
+      ...categories.filter(category => category.name !== '나').map(category => ({
         id: category.id, 
         label: category.name,
         shape: 'icon', // 아이콘으로 카테고리 표시
@@ -315,22 +365,47 @@ export default function MainScreen() {
 
     // 엣지 설정
     const edgesData = [
-      // 카테고리가 상위 카테고리 지정
-      ...categories.map(category => {
-        if (category.parentCategory) {
-          // 해당 상위 카테고리 찾기
-          const parentCat = categories.find(cat => cat.name === category.parentCategory);
-          // 있으면 해당 상위 카테고리에서 자신으로 이어지는 엣지
-          if (parentCat) return { from: parentCat.id, to: category.id };
+      // 카테고리 연결 로직 개선
+      ...categories.filter(category => category.name !== '나').map(category => {
+        console.log(`처리 중인 카테고리: ${category.name}, 부모: ${category.parentCategory}`);
+        // 부모 카테고리가 있는 경우
+        if (category.parentCategory && category.parentCategory !== '나') {
+          // 부모 카테고리 찾기
+          let parentCat = categories.find(cat => cat.name === category.parentCategory);
+
+          // name으로 찾지 못한 경우, title로도 시도
+          if (!parentCat) {
+            parentCat = categories.find(cat => cat.title === category.parentCategory);
+          }
+          // originalId로도 시도 (혹시 ID가 저장되어 있는 경우)
+          if (!parentCat && typeof category.parentCategory === 'number') {
+            parentCat = categories.find(cat => cat.originalId === category.parentCategory);
+          }
+
+          if (parentCat) {
+            console.log(`연결: ${parentCat.name}(${parentCat.id}) → ${category.name}(${category.id})`);
+            return { from: parentCat.id, to: category.id };
+          } else {
+            console.log(`부모 카테고리 '${category.parentCategory}'를 찾을 수 없음`);
+            console.log('사용 가능한 카테고리들:', categories.map(cat => ({ name: cat.name, title: cat.title, id: cat.originalId })));
+          }
         }
-        // 없거나 상위 카테고리 지정 안하면 earthIMG에서 자신으로 이어지는 엣지
+        // 부모 카테고리가 없거나 '나'인 경우 지구와 연결
+        console.log(`지구 연결: me → ${category.name}(${category.id})`);
         return { from: 'me', to: category.id };
-      }).filter(Boolean),
+      }).filter(edge => edge !== null), // null 값 제거
+      
       // 노드는 자신의 카테고리와 연결
-      ...nodes.filter(node => categories.some(cat => cat.name === node.category)).map(node => {
+      ...nodes.map(node => {
         const category = categories.find(cat => cat.name === node.category);
-        return { from: category.id, to: node.id };
-      })
+        if (category) {
+          return { from: category.id, to: node.id };
+        } else {
+          console.log(`노드 '${node.name}'의 카테고리 '${node.category}'를 찾을 수 없음`);
+          console.log('사용 가능한 카테고리들:', categories.map(cat => cat.name));
+          return null;
+        }
+      }).filter(edge => edge !== null) // null 값 제거
     ];
 
     // vis-network 데이터셋
@@ -365,23 +440,49 @@ export default function MainScreen() {
       }
     });
 
-    network.on('click', function (params) { // 노드 클릭 시, 실행
+    network.on('click', async function (params) { // 노드 클릭 시, 실행
       if (params.nodes.length > 0) { // 클릭된 노드의 ID 가져옴
         const nodeId = params.nodes[0];
         network.focus(nodeId, { // 클릭된 노드로 중심 이동 + 확대
           scale: 1.5,
           animation: { duration: 1000, easingFunction: 'easeInOutQuad' }
         });
-        // 노드 클릭 시, UserCard 표시
-        if (nodes.some(node => node.id === nodeId)) {
-          // 클릭 위치에 따라 카드 위치 지정
+
+        const node = nodes.find(n => n.id === nodeId);
+
+        if (node) {
           const canvasCoords = params.pointer.DOM;
           setCardPosition({ x: canvasCoords.x, y: canvasCoords.y });
-          // AddPopup에서 입력한 데이터 전달 + UserCard 표시
-          const nodeData = nodes.find(node => node.id === nodeId);
-          setClickedNodeData(nodeData);
-          setCardVisible(true);
-        // 배경이나 카테고리 클릭 시, UserCard 닫기
+
+          try {
+            const response = await fetch(`http://localhost:3000/api/v1/persons/${node.originalId}`, {
+              method: "GET",
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+              }
+            });
+            const data = await response.json();
+
+            if (data.resultType === 'SUCCESS' && data.success) {
+              const enrichedData = {
+                ...node,
+                name: data.success.name,
+                introduction: data.success.introduction,
+                note: data.success.note,
+                favorites: !!data.success.isFavorite,
+                heartCount: Math.round((data.success.likeability || 0) / 5 * 3), // 0~5 → 0~3
+                likeability: data.success.likeability
+              };
+              setClickedNodeData(enrichedData);
+              setCardVisible(true);
+            } else {
+              alert(`노드 정보 조회 실패: ${data.error?.reason || '알 수 없음'}`);
+            }
+          } catch (err) {
+            alert('노드 정보 불러오기 실패');
+            console.error(err);
+          }
         } else {
           setCardVisible(false);
           setClickedNodeData(null);
@@ -391,14 +492,7 @@ export default function MainScreen() {
         setClickedNodeData(null);
       }
     });
-
-    // 컴포넌트 언마운트 시 정리
-    return () => {
-      if (networkInstance.current) {
-        networkInstance.current.destroy();
-      }
-    };
-  }, [categories, nodes, userName, nodePositions]);
+    }, [categories, nodes, userName, nodePositions]);
 
   return (
     <div className="main-screen">
@@ -445,7 +539,13 @@ export default function MainScreen() {
         </button>
       </div>
 
-      <AddPopup visible={popupVisible} onClose={() => setPopupVisible(false)} onCategoryCreated={handleCategoryCreated} onNodeCreated={handleNodeCreated} existingCategories={categories.map(cat => cat.name)} />
+      <AddPopup 
+        visible={popupVisible} 
+        onClose={() => setPopupVisible(false)} 
+        onCategoryCreated={handleCategoryCreated} 
+        onNodeCreated={handleNodeCreated} 
+        existingCategories={categories} // 전체 객체 배열 전달
+      />
       <SearchPopup visible={searchVisible} onClose={() => setSearchVisible(false)} searchQuery={searchQuery} nodes={nodes} allCategories={categories} />
     </div>
   );

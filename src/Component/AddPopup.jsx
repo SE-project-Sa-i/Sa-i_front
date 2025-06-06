@@ -7,7 +7,7 @@ import './AddPopup.css';
 // onClose: 팝업 닫기
 // onCategoryCreated: 카테고리 생성
 // onNodeCreated: 노드 생성
-// existingCategories: 현재 카테고리 목록
+// existingCategories: 현재 카테고리 목록 (객체 배열)
 export default function AddPopup({ visible, onClose, onCategoryCreated, onNodeCreated, existingCategories = [] }) {
   const [categoryName, setCategoryName] = useState(''); // 카테고리 이름
   const [categoryError, setCategoryError] = useState(''); // 카테고리 오류
@@ -16,67 +16,151 @@ export default function AddPopup({ visible, onClose, onCategoryCreated, onNodeCr
   const [nodeIntro, setNodeIntro] = useState(''); // 노드 소개
   const [nodeNote, setNodeNote] = useState(''); // 노드 설명
   const [addToFavorites, setAddToFavorites] = useState(false); // 즐겨찾기
-  // 카테고리의 상위 카테고리
+  // 카테고리의 상위 카테고리 ID
   const [selectedCategoryForCategory, setSelectedCategoryForCategory] = useState('');
-  // 노드의 카테고리
+  // 노드의 카테고리 ID
   const [selectedCategoryForNode, setSelectedCategoryForNode] = useState('');
   // 색상 리스트
   const colors = ['#3C5146', '#507060', '#85A394', '#ACC0B6', '#DDD8C9', '#F2F4E6'];
 
   // Create New Category 버튼 클릭 시, 카테고리 생성
-  const handleCreateCategory = () => {
+  const handleCreateCategory = async () => {
     const trimmedName = categoryName.trim(); // 이름 앞뒤 공백 제거
     // 빈 이름이면 오류 처리
     if (trimmedName.length === 0) {
-      setCategoryError('Please enter at least one character ...');
+      setCategoryError("카테고리 이름을 입력해주세요.");
       return; // 생성 중단
     }
     // 이미 존재하는 이름이면 오류 처리
-    if (existingCategories.includes(trimmedName)) {
-      setCategoryError('The category already exists ...');
+    if (existingCategories.some(cat => cat.title === trimmedName)) {
+      setCategoryError("이미 존재하는 카테고리입니다.");
       return; // 생성 중단
     }
-    // 생성할 카테고리 데이터
+    
+    // 부모 카테고리 정보 찾기
+    const parentCategory = selectedCategoryForCategory ? 
+      existingCategories.find(cat => cat.originalId === parseInt(selectedCategoryForCategory)) : null;
+    
+    // 부모 ID 및 루트 여부 설정
+    const parentCategoryId = selectedCategoryForCategory ? parseInt(selectedCategoryForCategory) : null;
+    const isRootValue = selectedCategoryForCategory ? false : true;
+    
+    // 전송할 카테고리 데이터 (camelCase + snake_case)
     const categoryData = {
-      parentCategory: selectedCategoryForCategory, // 상위 카테고리
-      name: categoryName, // 카테고리 이름
-      color: selectedColor // 색상 코드
+      parentId: parentCategoryId,           // camelCase
+      parent_id: parentCategoryId,          // snake_case 
+      name: trimmedName,                    // 카테고리 제목
+      color: selectedColor,                 // 색상 코드
+      is_root: isRootValue,                 // snake_case
+      isRoot: isRootValue,                  // camelCase
+      user_id: parseInt(localStorage.getItem("userId"))
     };
-    console.log('Creating category:', categoryData);
-    // 카테고리 생성 시, MainScreen에 알려줌
-    if (onCategoryCreated) {
-      onCategoryCreated(categoryData);
-    }
-    setCategoryName(''); // 입력 이름 초기화
-    setSelectedColor('#3C5146'); // 색상 기본값
-    setSelectedCategoryForCategory(''); // 카테고리 선택 초기화
-    setCategoryError(''); // 에러 메시지 제거
-    onClose(); // 팝업 닫기
-  };
+    
+    try {
+      // API 요청
+      const response = await fetch("http://localhost:3000/api/v1/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(categoryData)
+      });
+      const result = await response.json();
 
+      if (result.resultType === "SUCCESS") {        
+        // MainScreen으로 전달할 카테고리 데이터에 부모 카테고리 이름 포함
+        const categoryDataForMainScreen = {
+          ...result.success,
+          // 서버 응답의 parentId를 사용하여 부모 카테고리 정보 찾기
+          parentCategory: result.success.parentId ? 
+            existingCategories.find(cat => cat.originalId === result.success.parentId)?.title : null,
+          parentCategoryId: result.success.parentId,
+          // originalId 필드 추가 (MainScreen에서 사용)
+          originalId: result.success.id,
+          // title 필드 추가 (MainScreen에서 사용)
+          title: result.success.name
+        };
+
+        if (onCategoryCreated) { // 카테고리 생성 시, MainScreen에 알려줌
+          onCategoryCreated(categoryDataForMainScreen);
+        }
+        
+        // 상태 초기화
+        setCategoryName(''); // 입력 이름 초기화
+        setSelectedColor('#507060'); // 색상 기본값
+        setSelectedCategoryForCategory(''); // 카테고리 선택 초기화
+        setCategoryError(''); // 에러 메시지 제거
+        onClose(); // 팝업 닫기
+      } else {
+        setCategoryError(result.error?.reason || "카테고리 생성 실패");
+      }
+    } catch (error) {
+      console.error("카테고리 생성 요청 실패:", error);
+      setCategoryError("서버와 연결할 수 없습니다.");
+    }
+  };
+    
   // Create New Node 버튼 클릭 시, 노드 생성
-  const handleCreateNode = () => {
-    const nodeData = { // 입력값 기반 노드 데이터
-      category: selectedCategoryForNode, // 어떤 카테고리
-      name: nodeName, // 노드 이름
-      intro: nodeIntro, // 노드 소개
-      note: nodeNote, // 노드 설명
-      favorites: addToFavorites // 즐겨찾기
-    };
-    console.log('Creating node:', nodeData);
-    // 노드 생성 시, MainScreen에 알려줌
-    if (onNodeCreated) {
-      onNodeCreated(nodeData);
+  const handleCreateNode = async () => {
+    if (!nodeName.trim() || !selectedCategoryForNode) {
+      alert("이름과 카테고리를 모두 입력해주세요.");
+      return;
     }
-    setNodeName(''); // 입력 이름 초기화
-    setNodeIntro(''); // 입력 소개 초기화
-    setNodeNote(''); // 입력 설명 초기화
-    setAddToFavorites(false); // 즐겨찾기 해제
-    setSelectedCategoryForNode(''); // 카테고리 선택 초기화
-    onClose(); // 팝업 닫기
+    
+    // 선택된 카테고리 정보 찾기
+    const selectedCategory = existingCategories.find(cat => cat.originalId === parseInt(selectedCategoryForNode));
+
+    const nodeData = { // 입력값 기반 노드 데이터
+      category_id: parseInt(selectedCategoryForNode), // 카테고리 ID
+      name: nodeName.trim(), // 노드 이름
+      introduction: nodeIntro.trim() || "", // 노드 소개
+      note: nodeNote.trim() || "", // 노드 설명
+      is_favorite: addToFavorites === true // 즐겨찾기
+    };
+
+    try {
+      // API 요청
+      const response = await fetch("http://localhost:3000/api/v1/persons", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(nodeData),
+      });
+      const result = await response.json();
+
+      if (result.resultType === "SUCCESS") {        
+        // MainScreen으로 전달할 노드 데이터에 카테고리 이름 포함
+        const nodeDataForMainScreen = {
+          ...result.success,
+          category: selectedCategory ? selectedCategory.title : null, // 카테고리 이름 추가
+          is_favorite: nodeData.is_favorite
+        };
+                
+        if (onNodeCreated) { // 노드 생성 시, MainScreen에 알려줌
+          onNodeCreated(nodeDataForMainScreen);
+        }
+        
+        // 상태 초기화
+        setNodeName(''); // 입력 이름 초기화
+        setNodeIntro(''); // 입력 소개 초기화
+        setNodeNote(''); // 입력 설명 초기화
+        setAddToFavorites(false); // 즐겨찾기 해제
+        setSelectedCategoryForNode(''); // 카테고리 선택 초기화
+        onClose(); // 팝업 닫기
+      } else {
+        alert(result.error?.reason || "노드 생성 실패");
+      }
+    } catch (error) {
+      console.error("노드 생성 중 오류:", error);
+      alert("서버와 연결할 수 없습니다.");
+    }
   };
 
-  if (!visible) return null; // not visible이면 null (화면 표시 X)
+  // 컴포넌트가 보이지 않으면 null 반환
+  if (!visible) return null;
 
   return (
     <div className="popup-overlay">
@@ -95,11 +179,13 @@ export default function AddPopup({ visible, onClose, onCategoryCreated, onNodeCr
               className="dropdown"
               value={selectedCategoryForCategory} // 현재 선택된 값
               // 선택 바뀌면 상태 업데이트
-              onChange={(e) => setSelectedCategoryForCategory(e.target.value)}
+              onChange={(e) => {
+                setSelectedCategoryForCategory(e.target.value);
+              }}
             >
               <option value="">Choose a Category ...</option>
-              {existingCategories.map((category, index) => (
-                <option key={index} value={category}>{category}</option>
+              {existingCategories.map((category) => (
+                <option key={category.originalId} value={category.originalId}>{category.title}</option>
               ))}
             </select>
             <input
@@ -137,8 +223,8 @@ export default function AddPopup({ visible, onClose, onCategoryCreated, onNodeCr
               onChange={(e) => setSelectedCategoryForNode(e.target.value)}
             >
               <option value="">Choose a Category ...</option>
-              {existingCategories.map((category, index) => (
-                <option key={index} value={category}>{category}</option>
+              {existingCategories.map((category) => (
+                <option key={category.originalId} value={category.originalId}>{category.title}</option>
               ))}
             </select>
             <input

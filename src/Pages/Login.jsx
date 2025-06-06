@@ -24,59 +24,42 @@ function Login() {
     };
   }, []);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    // 테스트 DB -------------------> API 연결
-    const fakeUsers = [
-      { id: "user1", password: "pass1234" },
-      { id: "test", password: "abcd1234" },
-      { id: "admin", password: "adminpass" },
-    ];
-
-    const user = fakeUsers.find((u) => u.id === id);
-
-    if (!user) {
-      alert("ID가 존재하지 않습니다.");
-      return;
-    }
-
-    if (user.password !== password) {
-      alert("비밀번호가 틀립니다.");
-      return;
-    }
-
-    console.log("로그인 성공:", { id });
-    navigate("/SignIn", { replace: true }); // 클릭 시 "/signin" 페이지로 이동
-  };
-
-  /* 
-  실제 API 코드 예시
   const handleLogin = async (e) => {
-  e.preventDefault();
-
-  try {
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, password }),
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          service_id: id,
+          password: password,
+        }),
     });
-
     const result = await response.json();
 
-    if (result.status === "no-id") {
-      alert("ID가 존재하지 않습니다.");
-    } else if (result.status === "wrong-password") {
-      alert("비밀번호가 틀립니다.");
-    } else if (result.status === "success") {
+    if (result.resultType === "SUCCESS") {
+      localStorage.setItem("token", result.success.token);
+      localStorage.setItem("userId", result.success.user.id);
+      console.log("로그인 성공 사용자:", result.success.user);
       navigate("/SignIn");
+    } else if (result.resultType === "FAIL") {
+      alert(result.error.reason || "로그인에 실패했습니다.");
+    } else if (!id) {
+      alert("ID를 입력해주세요.");
+      return;
+    } else if (!password) {
+      alert("비밀번호를 입력해주세요.")
+      return;
+    } else {
+      alert("알 수 없는 응답 형식입니다.");
     }
-  } catch (err) {
-    console.error("로그인 요청 실패:", err);
-    alert("서버 오류가 발생했습니다.");
+  } catch (error) {
+    console.error("로그인 요청 실패:", error);
+    alert("서버와 연결할 수 없습니다.");
   }
 };
-*/
 
   const handleSignup = (e) => {
     e.preventDefault();

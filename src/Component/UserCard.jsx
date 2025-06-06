@@ -28,28 +28,119 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
   // 데이터 변경 시, MainScreen에 알려줌
   const handleDataChange = (field, value) => {
     if (nodeData && onNodeUpdate) {
-      const updatedData = { ...nodeData, [field]: value };
+      const mappedField = {
+        intro: 'introduction',
+        note: 'note',
+        favorites: 'isFavorite',
+        heartCount: 'heartCount',
+        likeability: 'likeability',
+        date: 'date'
+      }[field] || field;
+      const updatedData = { ...nodeData, [mappedField]: value };
+      // heartCount → likeability 동기화
+      if (field === 'heartCount') {
+        const newLikeability = Math.round((value / 3) * 5); // 0~3 → 0~5
+        updatedData.likeability = newLikeability;
+      }
       onNodeUpdate(updatedData);
+      const payload = {
+        introduction: updatedData.introduction,
+        note: updatedData.note,
+        likeability: updatedData.likeability,
+        name: updatedData.name,
+      };
+      updatePersonInfo(payload);
     }
   };
 
+  const handleAddFavorite = async () => {
+    // API 연결 (즐겨찾기 추가)
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/persons/${nodeData.originalId}/favorites`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await response.json();
+      if (data.resultType === "SUCCESS") {
+        setStarFilled(true); // UI 반영
+        handleDataChange("favorites", true); // MainScreen에도 반영
+      } else {
+        alert("즐겨찾기 추가 실패");
+      }
+    } catch (err) {
+      console.error("즐겨찾기 추가 중 오류", err);
+    }
+  };
+
+  const updatePersonInfo = async (updatedData) => {
+    // API 연결 (노드 팝업 수정)
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/persons/${nodeData.originalId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      const data = await response.json();
+      if (data.resultType === "SUCCESS") {
+        console.log("인물 정보 수정 성공:", data.success);
+      } else {
+        console.error("인물 수정 실패:", data.error?.reason);
+      }
+    } catch (err) {
+      console.error("인물 정보 수정 중 오류 발생", err);
+    }
+  };
+
+  useEffect(() => {
+    // API 연결 (노드 팝업 조회)
+    if (nodeData && nodeData.originalId) {
+      fetch(`http://localhost:3000/api/v1/persons/${nodeData.originalId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("백엔드 응답:", data);
+          if (data.resultType === "SUCCESS") {
+            const person = data.success;
+            setStarFilled(Boolean(data.success.isFavorite));
+            setRegisteredDate(person.createdAt?.split("T")[0] || "");
+
+          }
+        })
+        .catch((err) => {
+          console.error("즐겨찾기 여부 조회 실패", err);
+        });
+    }
+  }, [nodeData]);
 
   useEffect(() => { // nodeData 변경 시, UserCard 업데이트
     if (nodeData) {
       setDisplayName(nodeData.name || ''); // 사용자 이름
-      setIntroText(nodeData.intro || ''); // One line Introduction
+      setIntroText(nodeData.introduction || ''); // One line Introduction
       setNoteText(nodeData.note || ''); // Note.
-      setStarFilled(nodeData.favorites || false); // 즐겨찾기
-      setHeartCount(nodeData.heartCount || 0); // 하트
+      setStarFilled(Boolean(nodeData.isFavorite)); // 즐겨찾기
+      // likeability → heartCount
+      const mappedHeartCount = Math.round((nodeData.likeability || 0) / 5 * 3);
+      setHeartCount(mappedHeartCount);
       if (nodeData.date) { // 등록일 자동 생성
         setRegisteredDate(nodeData.date);
-      } else {
-        const now = new Date();
-        const koreaTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
-        const dateStr = koreaTime.toISOString().split('T')[0]; // YYYY-MM-DD 형식
-        setRegisteredDate(dateStr);
-        handleDataChange('date', dateStr); // MainScreen에 알려줌
       }
+      // else {
+      //  const now = new Date();
+      //  const koreaTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+      //  const dateStr = koreaTime.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+      //  setRegisteredDate(dateStr);
+      //  handleDataChange('date', dateStr); // MainScreen에 알려줌
+      //}
     } else { // nodeData 없어 초기화
       setDisplayName('');
       setIntroText('');
@@ -74,6 +165,8 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
                   const newCount = i === heartCount - 1 ? i : i + 1;
                   setHeartCount(newCount);
                   handleDataChange('heartCount', newCount)
+                  const newLikeability = Math.round(newCount / 3 * 5);
+                  handleDataChange('likeability', newLikeability);
                 }}
                 fill={i < heartCount ? '#CE5F5C' : 'none'}
                 stroke="#CE5F5C"
@@ -93,8 +186,11 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
             <CircleUserRound size={140} color="white" />
           </div>
           <div className="star-icon" onClick={() => { // 클릭 시, MainScreen에 알려줌
-            setStarFilled(!starFilled);
-            handleDataChange('favorites', !starFilled);
+            if (!starFilled) {
+              handleAddFavorite();
+            } else {
+              alert("이미 즐겨찾기 추가됨");
+            }
           }}>
             <Star size={30} color="#FCBA2A" fill={starFilled ? "#FCBA2A" : "none"} />
           </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, SquareX, Star, ChevronRight } from 'lucide-react';
+import { Search, SquareX, ChevronRight } from 'lucide-react';
 
 // visible: 보여줄지 여부
 // onClose: 팝업 닫기
@@ -103,7 +103,6 @@ export default function SearchPopup({ visible, onClose, searchQuery, nodes = [],
         overflow: 'auto', // 내용 넘치면 스크롤
         position: 'relative'
       }}>
-
         {/* 닫기 버튼 */}
         <button
           onClick={onClose} // 버튼 클릭 시, onClose() 실행
@@ -166,15 +165,8 @@ export default function SearchPopup({ visible, onClose, searchQuery, nodes = [],
                       e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
                     }}
                   >
-                    {/* 즐겨찾기 표시 */}
-                    <div style={{ minWidth: '24px', paddingTop: '0.5rem' }}>
-                      <Star
-                        size={25}
-                        color={person.favorites ? '#FFD700' : 'black'}
-                        fill={person.favorites ? '#FFD700' : 'none'}
-                      />
-                    </div>
-                    <div style={{ flex: 1 }}>
+                    
+                    <div style={{ flex: 1, paddingLeft: '20px' }}>
                       <h3 style={{ // 이름 표시
                         margin: 0, marginBottom: '0.5rem',
                         fontSize: '1.3rem', fontWeight: 'bold'
