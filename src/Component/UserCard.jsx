@@ -75,6 +75,28 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
     }
   };
 
+  const handleRemoveFavorite = async () => {
+    // API 연결 (즐겨찾기 해제)
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/persons/${nodeData.originalId}/favorites`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await response.json();
+      if (data.resultType === "SUCCESS") {
+        setStarFilled(false); // UI 반영
+        handleDataChange("favorites", false); // MainScreen에도 반영
+      } else {
+        alert("즐겨찾기 해제 실패");
+      }
+    } catch (err) {
+      console.error("즐겨찾기 해제 중 오류", err);
+    }
+  };
+
   const updatePersonInfo = async (updatedData) => {
     // API 연결 (노드 팝업 수정)
     try {
@@ -191,7 +213,10 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
             if (!starFilled) {
               handleAddFavorite();
             } else {
-              alert("이미 즐겨찾기 추가됨");
+              const confirmUnfavorite = window.confirm("즐겨찾기를 해제하시겠습니까?");
+              if (confirmUnfavorite) {
+                handleRemoveFavorite();
+              }
             }
           }}>
             <Star size={30} color="#FCBA2A" fill={starFilled ? "#FCBA2A" : "none"} />
