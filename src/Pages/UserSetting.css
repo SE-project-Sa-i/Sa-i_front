@@ -68,3 +68,109 @@
   background-color: #a02020;
   color: #fff;
 }
+
+/* 사용자 정보 수정 관련 스타일 */
+.user-info-header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #507060;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+  margin-top: 2rem;
+}
+
+.edit-btn:hover {
+  background-color: #f0f0f0;
+  color: #405e4f;
+}
+
+.edit-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #507060;
+  border-radius: 4px;
+  font-size: 18px;
+  font-style: italic;
+  color: #6f6f6f;
+  background-color: white;
+  transition: border-color 0.2s;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #405e4f;
+}
+
+.edit-input:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  border-color: #ccc;
+}
+
+.readonly-field {
+  color: #999;
+  font-style: italic;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.save-btn,
+.cancel-btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-style: italic;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.save-btn {
+  background-color: #507060;
+  color: white;
+}
+
+.save-btn:hover:not(:disabled) {
+  background-color: #405e4f;
+}
+
+.save-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  background-color: #f0f0f0;
+  color: #666;
+  border: 1px solid #ccc;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.cancel-btn:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}

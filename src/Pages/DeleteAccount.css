@@ -15,6 +15,7 @@
   text-align: center;
   margin: 0;
 }
+
 .warncomment {
   color: #a02020;
   font-size: 25px;
@@ -22,42 +23,184 @@
   font-weight: 400;
   text-align: center;
   margin: 0;
-
-  margin-bottom: 1.5rem;
+  margin-bottom: 3rem;
 }
 
-.delete-form {
+/* 삭제 액션 버튼들 */
+.delete-actions {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-
-.delete-form input {
-  width: 100%;
-  padding: 0.75rem;
-  font-size: 16px;
-  font-style: italic;
-  border: 1px solid #545454;
-  border-radius: 4px;
-  outline: none;
-}
-
-/* 버튼 */
-
-/* ID + PW + 버튼 한 줄로 */
-.input-button-row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-end;
-  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: center;
 }
 
 .del-btn {
-  width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 2.5rem;
   font-style: italic;
   border: 1px solid #a02020;
-  border-radius: 0 4px 4px 0;
+  border-radius: 25px;
+  background-color: #ffffff;
+  color: #a02020;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-width: 150px;
+}
+
+.del-btn:hover:not(:disabled) {
+  background-color: #a02020;
+  color: #fff;
+}
+
+.del-btn:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 메인 페이지 취소 버튼 */
+.cancel-main-btn {
+  padding: 0.75rem 2.5rem;
+  font-style: italic;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: #f0f0f0;
+  color: #666;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-width: 150px;
+}
+
+.cancel-main-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.cancel-main-btn:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-content h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.modal-content p {
+  margin: 0.5rem 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.warning-text {
+  color: #a02020 !important;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: center;
+}
+
+.modal-btn {
+  padding: 0.75rem 2.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-style: italic;
+  transition: background-color 0.2s;
+  min-width: 100px;
+}
+
+.cancel-btn {
+  background-color: #f0f0f0;
+  color: #666;
+  border: 1px solid #ccc;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.delete-btn {
+  background-color: #a02020;
+  color: white;
+  border: 1px solid #a02020;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background-color: #8a1a1a;
+  border-color: #8a1a1a;
+}
+
+.modal-btn:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+-table td {
+  padding: 1rem 2rem;
+  text-align: left;
+}
+
+.info-table th {
+  font-weight: 400;
+}
+
+.info-table td {
+  font-weight: 300;
+}
+
+.info-table tr:not(:last-child) {
+  border-bottom: 5px solid transparent;
+}
+
+.info-table {
+  border-left: 1px solid #999;
+}
+
+.DeleteSet {
+  font-weight: 400;
+  color: #b61313;
+}
+
+.del-btn1 {
+  padding: 0.75rem 5rem;
+  font-style: italic;
+  border: 1px solid #a02020;
+  border-radius: 25px;
   background-color: #ffffff;
   color: #a02020;
   font-size: 16px;
@@ -65,7 +208,113 @@
   transition: background-color 0.2s;
 }
 
-.del-btn:hover {
+.del-btn1:hover {
   background-color: #a02020;
   color: #fff;
+}
+
+/* 사용자 정보 수정 관련 스타일 */
+.user-info-header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #507060;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+  margin-top: 2rem;
+}
+
+.edit-btn:hover {
+  background-color: #f0f0f0;
+  color: #405e4f;
+}
+
+.edit-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #507060;
+  border-radius: 4px;
+  font-size: 18px;
+  font-style: italic;
+  color: #6f6f6f;
+  background-color: white;
+  transition: border-color 0.2s;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #405e4f;
+}
+
+.edit-input:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  border-color: #ccc;
+}
+
+.readonly-field {
+  color: #999;
+  font-style: italic;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.save-btn,
+.cancel-btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-style: italic;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.save-btn {
+  background-color: #507060;
+  color: white;
+}
+
+.save-btn:hover:not(:disabled) {
+  background-color: #405e4f;
+}
+
+.save-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  background-color: #f0f0f0;
+  color: #666;
+  border: 1px solid #ccc;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.cancel-btn:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
 }
