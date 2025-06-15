@@ -289,7 +289,6 @@ export default function UserCard({
       </div>
 
       <div className="card-footer">
-        // UserCard.jsx의 버튼 부분
         <button
           className="view-button"
           onClick={() => navigate(`/Memory/${nodeData.originalId}`)}

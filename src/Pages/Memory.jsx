@@ -1,74 +1,210 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaCheck } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 import { GiRoundStar } from "react-icons/gi";
 import { CircleUserRound } from "lucide-react";
-import { getPersonInfo } from "../apis/person";
+import {
+  getPersonInfo,
+  postPersonMemory,
+  updatePersonInfo,
+  postPersonFavorite,
+  deletePersonFavorite,
+} from "../apis/person";
 import "./Memory.css";
 
 function Memory() {
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [error, setError] = useState(null);
   const [personData, setPersonData] = useState(null);
   const [newMemory, setNewMemory] = useState("");
 
   const navigate = useNavigate();
-  const { personId } = useParams(); // URL에서 personId 가져오기
+  const { personId } = useParams();
 
-  // API에서 받은 데이터 기반 상태들
-  const [clicked, setClicked] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [memories, setMemories] = useState([]);
   const [extraInfos, setExtraInfos] = useState([]);
+
+  const [editData, setEditData] = useState({
+    name: "",
+    introduction: "",
+    note: "",
+    likeability: 0,
+  });
 
   useEffect(() => {
     const fetchPersonData = async () => {
       try {
         setLoading(true);
-        const response = await getPersonInfo(personId || 1); // personId가 없으면 기본값 1 사용
+        const response = await getPersonInfo(personId || 1);
 
         if (response.resultType === "SUCCESS") {
           const data = response.success;
+
           setPersonData(data);
-          setClicked(!!data.is_favorite);
+          setIsFavorite(!!data.is_favorite || !!data.isFavorite);
           setMemories(data.memories || []);
           setExtraInfos(data.extraInfos || []);
+
+          setEditData({
+            name: data.name || "",
+            introduction: data.introduction || "",
+            note: data.note || "",
+            likeability: data.likeability || 0,
+          });
         } else {
           setError(
             response.error?.reason || "데이터를 불러오는데 실패했습니다."
           );
         }
       } catch (err) {
-        console.error("Person data fetch error:", err);
+        if (err.response?.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userId");
+          navigate("/");
+          return;
+        }
         setError("서버와 연결할 수 없습니다.");
       } finally {
         setLoading(false);
       }
     };
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+      return;
+    }
+
     fetchPersonData();
-  }, [personId]);
+  }, [personId, navigate]);
 
-  const toggleEditMode = () => setEditMode(!editMode);
+  const toggleEditMode = () => {
+    if (editMode) {
+      setEditData({
+        name: personData.name || "",
+        introduction: personData.introduction || "",
+        note: personData.note || "",
+        likeability: personData.likeability || 0,
+      });
+    }
+    setEditMode(!editMode);
+  };
 
-  const addMemory = async () => {
-    if (newMemory.trim()) {
-      // 실제로는 API 호출을 해야 하지만, 지금은 로컬 상태만 업데이트
-      const newMemoryItem = {
-        id: Date.now(),
-        content: newMemory.trim(),
-        registeredAt: new Date().toISOString(),
+  const handleInputChange = (field, value) => {
+    setEditData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      setSaving(true);
+
+      if (!editData.name.trim()) {
+        alert("이름을 입력해주세요.");
+        return;
+      }
+
+      if (editData.likeability < 0 || editData.likeability > 100) {
+        alert("호감도는 0~100 사이의 값이어야 합니다.");
+        return;
+      }
+
+      const updateData = {
+        name: editData.name.trim(),
+        introduction: editData.introduction.trim(),
+        note: editData.note.trim(),
+        likeability: parseInt(editData.likeability),
       };
-      setMemories([...memories, newMemoryItem]);
-      setNewMemory("");
+
+      const response = await updatePersonInfo(personId, updateData);
+
+      if (response.resultType === "SUCCESS") {
+        setPersonData((prev) => ({
+          ...prev,
+          ...updateData,
+        }));
+
+        setEditMode(false);
+        alert("정보가 성공적으로 수정되었습니다.");
+      } else {
+        alert(response.error?.reason || "정보 수정에 실패했습니다.");
+      }
+    } catch (err) {
+      if (err.response?.data?.error?.reason) {
+        alert(err.response.data.error.reason);
+      } else {
+        alert("서버와 연결할 수 없습니다.");
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleStar = () => {
-    setClicked(!clicked);
-    // 실제로는 즐겨찾기 API 호출 필요
+  const addMemory = async () => {
+    if (newMemory.trim()) {
+      try {
+        const memoryData = {
+          content: newMemory.trim(),
+        };
+
+        const response = await postPersonMemory(personId, memoryData);
+
+        if (response.resultType === "SUCCESS") {
+          const newMemoryItem = {
+            id: response.success.id || Date.now(),
+            content: newMemory.trim(),
+            registeredAt: new Date().toISOString(),
+          };
+          setMemories((prev) => [...prev, newMemoryItem]);
+          setNewMemory("");
+          alert("추억이 성공적으로 추가되었습니다.");
+        } else {
+          alert(response.error?.reason || "추억 추가에 실패했습니다.");
+        }
+      } catch (err) {
+        alert("서버와 연결할 수 없습니다.");
+      }
+    }
+  };
+
+  const handleFavoriteToggle = async () => {
+    try {
+      setFavoriteLoading(true);
+
+      if (!isFavorite) {
+        const response = await postPersonFavorite(personId);
+
+        if (response.resultType === "SUCCESS") {
+          setIsFavorite(true);
+        } else {
+          alert(response.error?.reason || "즐겨찾기 추가에 실패했습니다.");
+        }
+      } else {
+        const response = await deletePersonFavorite(personId);
+
+        if (response.resultType === "SUCCESS") {
+          setIsFavorite(false);
+        } else {
+          alert(response.error?.reason || "즐겨찾기 해제에 실패했습니다.");
+        }
+      }
+    } catch (err) {
+      if (err.response?.data?.error?.reason) {
+        alert(err.response.data.error.reason);
+      } else {
+        alert("서버와 연결할 수 없습니다.");
+      }
+    } finally {
+      setFavoriteLoading(false);
+    }
   };
 
   const handleReturn = (e) => {
@@ -77,15 +213,23 @@ function Memory() {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date
-      .toLocaleDateString("ko-KR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
-      .replace(/\./g, "/")
-      .replace(/ /g, "");
+    if (!dateString) return "날짜 없음";
+
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "잘못된 날짜";
+
+      return date
+        .toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .replace(/\./g, "/")
+        .replace(/ /g, "");
+    } catch (error) {
+      return "날짜 오류";
+    }
   };
 
   if (loading) {
@@ -122,14 +266,17 @@ function Memory() {
 
   return (
     <div className="memory-page">
-      {/* 상단 헤더 */}
       <div className="memory-header-new">
         <div className="header-content">
           <h1 className="memory-title">
-            Memory with <span className="user-name">{personData.name}</span>
+            Memory with{" "}
+            <span className="user-name">
+              {editMode ? editData.name : personData.name || "이름 없음"}
+            </span>
           </h1>
           <div className="registration-date">
-            Registered {formatDate(personData.created_at)}
+            Registered{" "}
+            {formatDate(personData.createdAt || personData.created_at)}
           </div>
         </div>
         <button className="home-button" onClick={handleReturn}>
@@ -137,24 +284,55 @@ function Memory() {
         </button>
       </div>
 
-      {/* 메인 컨테이너 */}
       <div className="memory-main-container">
-        {/* 왼쪽 패널 */}
         <div className="left-section">
-          {/* 즐겨찾기 별 */}
-          <div className="star-container">
-            <button
-              className={`star-button ${clicked ? "clicked" : ""}`}
-              onClick={handleStar}
-            >
-              <GiRoundStar size={32} />
-            </button>
-            <span className="heart-percentage">
-              {Math.round((personData.likeability / 5) * 100)}%
-            </span>
+          <div className="top-indicators">
+            <div className="star-container">
+              <button
+                className={`star-button ${isFavorite ? "clicked" : ""} ${
+                  favoriteLoading ? "loading" : ""
+                }`}
+                onClick={handleFavoriteToggle}
+                disabled={favoriteLoading}
+                title={
+                  favoriteLoading
+                    ? "처리 중..."
+                    : isFavorite
+                    ? "즐겨찾기 해제"
+                    : "즐겨찾기 추가"
+                }
+              >
+                <GiRoundStar size={24} />
+              </button>
+            </div>
+
+            <div className="likeability-container">
+              {editMode ? (
+                <>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={editData.likeability}
+                    onChange={(e) =>
+                      handleInputChange("likeability", e.target.value)
+                    }
+                    className="edit-input-inline"
+                  />
+                  <span>%</span>
+                  <FaHeart size={22} color="#CE5F5C" />
+                </>
+              ) : (
+                <>
+                  <span className="heart-percentage">
+                    {`${editData.likeability || 0}%`}
+                  </span>
+                  <FaHeart size={22} color="#CE5F5C" />
+                </>
+              )}
+            </div>
           </div>
 
-          {/* 프로필 이미지 */}
           <div className="profile-container">
             <div className="profile-circle">
               {personData.image_url ? (
@@ -169,7 +347,6 @@ function Memory() {
             </div>
           </div>
 
-          {/* 추가 정보들 */}
           {extraInfos.length > 0 && (
             <div className="extra-info-section">
               {extraInfos.map((info) => (
@@ -182,39 +359,80 @@ function Memory() {
           )}
         </div>
 
-        {/* 오른쪽 섹션 */}
         <div className="right-section">
-          {/* 카테고리 정보 */}
           <div className="category-header">
-            <span className="category-path">{personData.allPath}</span>
+            <span className="category-path">
+              {personData.allPath ||
+                personData.categoryPath ||
+                "카테고리 정보 없음"}
+            </span>
             <div className="action-buttons">
-              <button className="edit-icon" onClick={toggleEditMode}>
-                <GoPencil size={20} />
+              <button
+                className="edit-icon"
+                onClick={editMode ? handleSaveChanges : toggleEditMode}
+                disabled={saving}
+              >
+                {editMode ? (
+                  saving ? (
+                    "저장 중..."
+                  ) : (
+                    <FaCheck size={20} />
+                  )
+                ) : (
+                  <GoPencil size={20} />
+                )}
               </button>
-              <button className="check-icon">✓</button>
+              {editMode && (
+                <button className="cancel-icon" onClick={toggleEditMode}>
+                  ✕
+                </button>
+              )}
             </div>
           </div>
 
-          {/* 소개 및 노트 섹션 */}
           <div className="content-section">
             <div className="section-title">
-              {personData.introduction || "소개"}
+              {editMode ? (
+                <input
+                  type="text"
+                  value={editData.introduction}
+                  onChange={(e) =>
+                    handleInputChange("introduction", e.target.value)
+                  }
+                  placeholder="소개를 입력하세요"
+                  className="edit-input-title"
+                />
+              ) : (
+                editData.introduction || "소개를 추가해주세요"
+              )}
             </div>
 
             <div className="notes-section">
               <div className="notes-label">Note:</div>
               <div className="notes-content">
-                <div className="note-item">{personData.note}</div>
+                {editMode ? (
+                  <textarea
+                    value={editData.note}
+                    onChange={(e) => handleInputChange("note", e.target.value)}
+                    placeholder="노트를 입력하세요"
+                    className="edit-textarea"
+                    rows={4}
+                  />
+                ) : (
+                  <div className="note-item">
+                    {editData.note || "노트를 추가해주세요"}
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Memory Timeline */}
           <div className="timeline-section">
             <div className="timeline-header">
               <span className="timeline-title">Memory Timeline</span>
               <span className="timeline-date">
-                Registered {formatDate(personData.created_at)}
+                Registered{" "}
+                {formatDate(personData.createdAt || personData.created_at)}
               </span>
             </div>
 
