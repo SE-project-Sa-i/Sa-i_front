@@ -45,7 +45,7 @@ axiosInstance.interceptors.response.use(
         );
         removeAccessToken();
         removeRefreshToken();
-        window.location.href = "/login";
+        window.location.href = "/";
         return Promise.reject(err);
       }
 
@@ -83,7 +83,7 @@ axiosInstance.interceptors.response.use(
             );
             removeAccessToken();
             removeRefreshToken();
-            window.location.href = "/login";
+            window.location.href = "/";
             return Promise.reject(error);
           })
           .finally(() => {
