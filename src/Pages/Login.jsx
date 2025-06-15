@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-
+import { postSignIn } from "../apis/auth"; // API 함수 import
 import "./Login.css";
 
 function Login() {
@@ -26,40 +26,38 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          service_id: id,
-          password: password,
-        }),
-    });
-    const result = await response.json();
 
-    if (result.resultType === "SUCCESS") {
-      localStorage.setItem("token", result.success.token);
-      localStorage.setItem("userId", result.success.user.id);
-      console.log("로그인 성공 사용자:", result.success.user);
-      navigate("/SignIn");
-    } else if (result.resultType === "FAIL") {
-      alert(result.error.reason || "로그인에 실패했습니다.");
-    } else if (!id) {
+    // 입력값 검증
+    if (!id) {
       alert("ID를 입력해주세요.");
       return;
-    } else if (!password) {
-      alert("비밀번호를 입력해주세요.")
-      return;
-    } else {
-      alert("알 수 없는 응답 형식입니다.");
     }
-  } catch (error) {
-    console.error("로그인 요청 실패:", error);
-    alert("서버와 연결할 수 없습니다.");
-  }
-};
+    if (!password) {
+      alert("비밀번호를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const result = await postSignIn({
+        service_id: id,
+        password: password,
+      });
+
+      if (result.resultType === "SUCCESS") {
+        localStorage.setItem("token", result.success.token);
+        localStorage.setItem("userId", result.success.user.id);
+        console.log("로그인 성공 사용자:", result.success.user);
+        navigate("/SignIn");
+      } else if (result.resultType === "FAIL") {
+        alert(result.error.reason || "로그인에 실패했습니다.");
+      } else {
+        alert("알 수 없는 응답 형식입니다.");
+      }
+    } catch (error) {
+      console.error("로그인 요청 실패:", error);
+      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
+  };
 
   const handleSignup = (e) => {
     e.preventDefault();

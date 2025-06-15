@@ -1,15 +1,8 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Welcome.css";
 
 function SignIn() {
   const navigate = useNavigate();
-  const backtoLogIn = (e) => {
-    e.preventDefault();
-    console.log("1초 뒤 메인 페이지로 넘어감");
-
-    navigate("/"); // 클릭 시 "/" == login 페이지로 이동 
-  };
 
   const gotoMain = (e) => {
     e.preventDefault();
@@ -17,7 +10,7 @@ function SignIn() {
 
     setTimeout(() => {
       navigate("/MainScreen");
-    }, 1000); 
+    }, 1000);
   };
 
   return (
