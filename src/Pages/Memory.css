@@ -1,4 +1,386 @@
-/* === 기본 래퍼 === */
+/* 전체 Memory 페이지 */
+.memory-page {
+  width: 100vw;
+  height: 100vh;
+  background-color: #f8f2f0;
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 상단 헤더 */
+.memory-header-new {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 3rem;
+  background-color: #f8f2f0;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.memory-title {
+  font-size: 3.5rem;
+  font-style: italic;
+  font-weight: 900;
+  color: #2d4a35;
+  margin: 0;
+  text-align: center;
+}
+
+.user-name {
+  color: #2d4a35;
+}
+
+.registration-date {
+  font-size: 1.2rem;
+  color: #888;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+.home-button {
+  background: none;
+  border: none;
+  color: #507060;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.home-button:hover {
+  background-color: rgba(80, 112, 96, 0.1);
+}
+
+/* 메인 컨테이너 */
+.memory-main-container {
+  flex: 1;
+  display: flex;
+  background-color: #f8f2f0;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+  margin: 0 2rem;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 왼쪽 섹션 */
+.left-section {
+  width: 30%;
+  background-color: #9bb4a0;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.star-container {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.star-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.2s;
+}
+
+.star-button:hover {
+  color: #555;
+}
+
+.star-button.clicked {
+  color: #ffd700;
+}
+
+.heart-percentage {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.profile-container {
+  flex: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-circle {
+  width: 200px;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 오른쪽 섹션 */
+.right-section {
+  width: 70%;
+  background-color: #f1f1e7;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 카테고리 헤더 */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.category-path {
+  background-color: #9bb4a0;
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.edit-icon,
+.check-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #507060;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.edit-icon:hover,
+.check-icon:hover {
+  background-color: rgba(80, 112, 96, 0.1);
+}
+
+/* 콘텐츠 섹션 */
+.content-section {
+  flex: 1;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #2d4a35;
+  margin-bottom: 1.5rem;
+}
+
+.notes-section {
+  margin-bottom: 2rem;
+}
+
+.notes-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #507060;
+  margin-bottom: 1rem;
+}
+
+.notes-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.note-item {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.note-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #507060;
+  font-weight: bold;
+}
+
+/* 타임라인 섹션 */
+.timeline-section {
+  background-color: #9bb4a0;
+  padding: 1.5rem 2rem;
+  border-radius: 15px;
+  margin-top: auto;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timeline-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: white;
+}
+
+.timeline-date {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-style: italic;
+}
+
+/* 추가된 스타일들 */
+
+/* 로딩 및 에러 상태 */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 1.5rem;
+  color: #507060;
+}
+
+.error-container button {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  background-color: #507060;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* 프로필 이미지 */
+.profile-image-api {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* 추가 정보 섹션 */
+.extra-info-section {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.info-row {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.info-label {
+  width: 40%;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 8px 12px;
+  font-style: italic;
+  color: #333;
+  text-align: center;
+  font-weight: 600;
+}
+
+.info-value {
+  width: 60%;
+  padding: 8px 12px;
+  font-weight: 400;
+  color: #333;
+}
+
+/* 메모리 컨테이너 */
+.memories-container {
+  margin-top: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.memory-item {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+  border-radius: 10px;
+  border-left: 4px solid #507060;
+}
+
+.memory-content {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.memory-date {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+  text-align: right;
+}
+
+/* 추억 추가 섹션 */
+.add-memory-section {
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+
+.memory-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #9bb4a0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
+  margin-bottom: 0.5rem;
+}
+
+.memory-input:focus {
+  outline: none;
+  border-color: #507060;
+}
+
+.add-memory-btn {
+  background-color: #507060;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.add-memory-btn:hover {
+  background-color: #405e4f;
+}
+
+/* 기존 스타일들은 유지하되 사용하지 않는 부분들 */
 .memory-wrapper {
   width: 1000px;
   margin: 1rem auto;
@@ -15,7 +397,7 @@
   font-weight: 900;
 }
 
-/* === 헤더 === */
+/* 기존 스타일들은 호환성을 위해 유지 */
 .memory-header {
   padding: 1rem 2rem;
   border-bottom: 1px solid #ccc;
@@ -26,11 +408,13 @@
   text-align: center;
   gap: 0.5rem;
 }
+
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
+
 .memory-header .date {
   font-size: 20px;
   color: #888;
@@ -71,9 +455,10 @@
   margin: 0 0 20px 0;
   margin-bottom: 10px;
   cursor: pointer;
-  align-self: flex-start; /* 💡 핵심: 부모가 flex일 때 왼쪽 정렬 */
+  align-self: flex-start;
   margin-left: 10px;
 }
+
 .Star:hover {
   color: rgb(65, 65, 65);
 }
@@ -81,6 +466,7 @@
 .Star.clicked {
   color: rgb(221, 158, 41);
 }
+
 .heart-wrapper {
   position: absolute;
   top: 32px;
@@ -205,6 +591,7 @@
   justify-content: space-between;
   align-items: center;
 }
+
 .header h2 {
   font-size: 40px;
 }
@@ -247,7 +634,6 @@
   font-size: 1.2rem;
 }
 
-/* return 버튼 */
 .return-button-wrap {
   margin-top: 1.5rem;
 }
@@ -261,7 +647,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  align-self: flex-start; /* 💡 핵심: 부모가 flex일 때 왼쪽 정렬 */
+  align-self: flex-start;
   margin-left: 900px;
 }
 

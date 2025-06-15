@@ -1,44 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, Star, CircleUserRound } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Heart, Star, CircleUserRound } from "lucide-react";
 // UserCard 디자인 불러오기
-import { useNavigate } from 'react-router-dom';
-import './UserCard.css';
+import { useNavigate } from "react-router-dom";
+import "./UserCard.css";
 
 // visible: 보여줄지 여부
 // onClose: 팝업 닫기
 // x, y: 클릭 위치
 // nodeData: 선택된 노드 데이터
 // onNodeUpdate: 데이터 변경 시, MainScreen에 알려줌
-export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdate }) {
+export default function UserCard({
+  visible,
+  onClose,
+  x,
+  y,
+  nodeData,
+  onNodeUpdate,
+}) {
   // 클릭된 하트 갯수
   const [heartCount, setHeartCount] = useState(0);
   // 즐겨찾기 여부
   const [starFilled, setStarFilled] = useState(false);
   // One line Introduction
-  const [introText, setIntroText] = useState('');
+  const [introText, setIntroText] = useState("");
   // Note.
-  const [noteText, setNoteText] = useState('');
+  const [noteText, setNoteText] = useState("");
   // 등록일 (자동 등록)
-  const [registeredDate, setRegisteredDate] = useState('');
+  const [registeredDate, setRegisteredDate] = useState("");
   // 사용자 이름 (nodeData.name 기준)
-  const [displayName, setDisplayName] = useState('');
-  //이동 함수 
+  const [displayName, setDisplayName] = useState("");
+  //이동 함수
   const navigate = useNavigate();
 
   // 데이터 변경 시, MainScreen에 알려줌
   const handleDataChange = (field, value) => {
     if (nodeData && onNodeUpdate) {
-      const mappedField = {
-        intro: 'introduction',
-        note: 'note',
-        favorites: 'isFavorite',
-        heartCount: 'heartCount',
-        likeability: 'likeability',
-        date: 'date'
-      }[field] || field;
+      const mappedField =
+        {
+          intro: "introduction",
+          note: "note",
+          favorites: "isFavorite",
+          heartCount: "heartCount",
+          likeability: "likeability",
+          date: "date",
+        }[field] || field;
       const updatedData = { ...nodeData, [mappedField]: value };
       // heartCount → likeability 동기화
-      if (field === 'heartCount') {
+      if (field === "heartCount") {
         const newLikeability = Math.round((value / 3) * 5); // 0~3 → 0~5
         updatedData.likeability = newLikeability;
       }
@@ -56,13 +64,16 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
   const handleAddFavorite = async () => {
     // API 연결 (즐겨찾기 추가)
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/persons/${nodeData.originalId}/favorites`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/v1/persons/${nodeData.originalId}/favorites`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       const data = await response.json();
       if (data.resultType === "SUCCESS") {
         setStarFilled(true); // UI 반영
@@ -78,13 +89,16 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
   const handleRemoveFavorite = async () => {
     // API 연결 (즐겨찾기 해제)
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/persons/${nodeData.originalId}/favorites`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/v1/persons/${nodeData.originalId}/favorites`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       const data = await response.json();
       if (data.resultType === "SUCCESS") {
         setStarFilled(false); // UI 반영
@@ -100,14 +114,17 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
   const updatePersonInfo = async (updatedData) => {
     // API 연결 (노드 팝업 수정)
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/persons/${nodeData.originalId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(updatedData),
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/v1/persons/${nodeData.originalId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
 
       const data = await response.json();
       if (data.resultType === "SUCCESS") {
@@ -135,7 +152,6 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
             const person = data.success;
             setStarFilled(Boolean(data.success.isFavorite));
             setRegisteredDate(person.createdAt?.split("T")[0] || "");
-
           }
         })
         .catch((err) => {
@@ -144,16 +160,20 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
     }
   }, [nodeData]);
 
-  useEffect(() => { // nodeData 변경 시, UserCard 업데이트
+  useEffect(() => {
+    // nodeData 변경 시, UserCard 업데이트
     if (nodeData) {
-      setDisplayName(nodeData.name || ''); // 사용자 이름
-      setIntroText(nodeData.introduction || ''); // One line Introduction
-      setNoteText(nodeData.note || ''); // Note.
+      setDisplayName(nodeData.name || ""); // 사용자 이름
+      setIntroText(nodeData.introduction || ""); // One line Introduction
+      setNoteText(nodeData.note || ""); // Note.
       setStarFilled(Boolean(nodeData.isFavorite)); // 즐겨찾기
       // likeability → heartCount
-      const mappedHeartCount = Math.round((nodeData.likeability || 0) / 5 * 3);
+      const mappedHeartCount = Math.round(
+        ((nodeData.likeability || 0) / 5) * 3
+      );
       setHeartCount(mappedHeartCount);
-      if (nodeData.date) { // 등록일 자동 생성
+      if (nodeData.date) {
+        // 등록일 자동 생성
         setRegisteredDate(nodeData.date);
       }
       /*
@@ -165,10 +185,11 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
       handleDataChange('date', dateStr); // MainScreen에 알려줌
       }
       */
-    } else { // nodeData 없어 초기화
-      setDisplayName('');
-      setIntroText('');
-      setNoteText('');
+    } else {
+      // nodeData 없어 초기화
+      setDisplayName("");
+      setIntroText("");
+      setNoteText("");
       setStarFilled(false);
     }
   }, [nodeData]);
@@ -177,7 +198,7 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
 
   return (
     // 클릭 위치 기준 절대 위치
-    <div className="user-card" style={{ top: y + 'px', left: x + 'px' }}>
+    <div className="user-card" style={{ top: y + "px", left: x + "px" }}>
       <div className="card-header">
         <div className="card-name-heart">
           <div className="card-name">{displayName}</div>
@@ -188,11 +209,11 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
                 onClick={() => {
                   const newCount = i === heartCount - 1 ? i : i + 1;
                   setHeartCount(newCount);
-                  handleDataChange('heartCount', newCount)
-                  const newLikeability = Math.round(newCount / 3 * 5);
-                  handleDataChange('likeability', newLikeability);
+                  handleDataChange("heartCount", newCount);
+                  const newLikeability = Math.round((newCount / 3) * 5);
+                  handleDataChange("likeability", newLikeability);
                 }}
-                fill={i < heartCount ? '#CE5F5C' : 'none'}
+                fill={i < heartCount ? "#CE5F5C" : "none"}
                 stroke="#CE5F5C"
                 size={30}
               />
@@ -201,7 +222,13 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
           </div>
         </div>
         {/* 읽기 전용 */}
-        <input type="text" value={registeredDate} readOnly placeholder="Auto date" className="card-date" />
+        <input
+          type="text"
+          value={registeredDate}
+          readOnly
+          placeholder="Auto date"
+          className="card-date"
+        />
       </div>
 
       <div className="card-body">
@@ -209,17 +236,26 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
           <div className="profile-image">
             <CircleUserRound size={140} color="white" />
           </div>
-          <div className="star-icon" onClick={() => { // 클릭 시, MainScreen에 알려줌
-            if (!starFilled) {
-              handleAddFavorite();
-            } else {
-              const confirmUnfavorite = window.confirm("즐겨찾기를 해제하시겠습니까?");
-              if (confirmUnfavorite) {
-                handleRemoveFavorite();
+          <div
+            className="star-icon"
+            onClick={() => {
+              // 클릭 시, MainScreen에 알려줌
+              if (!starFilled) {
+                handleAddFavorite();
+              } else {
+                const confirmUnfavorite =
+                  window.confirm("즐겨찾기를 해제하시겠습니까?");
+                if (confirmUnfavorite) {
+                  handleRemoveFavorite();
+                }
               }
-            }
-          }}>
-            <Star size={30} color="#FCBA2A" fill={starFilled ? "#FCBA2A" : "none"} />
+            }}
+          >
+            <Star
+              size={30}
+              color="#FCBA2A"
+              fill={starFilled ? "#FCBA2A" : "none"}
+            />
           </div>
         </div>
         <div className="intro-note">
@@ -230,7 +266,7 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
               value={introText}
               onChange={(e) => {
                 setIntroText(e.target.value);
-                handleDataChange('intro', e.target.value);
+                handleDataChange("intro", e.target.value);
               }}
               placeholder="Enter introduction .."
               className="intro-input"
@@ -242,7 +278,7 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
               value={noteText}
               onChange={(e) => {
                 setNoteText(e.target.value);
-                handleDataChange('note', e.target.value);
+                handleDataChange("note", e.target.value);
               }}
               rows={3}
               placeholder="Enter Note .."
@@ -253,8 +289,14 @@ export default function UserCard({ visible, onClose, x, y, nodeData, onNodeUpdat
       </div>
 
       <div className="card-footer">
-        <button className="view-button" onClick={() => navigate("/Memory")}>View More Memories</button>
+        // UserCard.jsx의 버튼 부분
+        <button
+          className="view-button"
+          onClick={() => navigate(`/Memory/${nodeData.originalId}`)}
+        >
+          View More Memories
+        </button>
       </div>
     </div>
   );
-} 
+}
