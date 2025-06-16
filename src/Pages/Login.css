@@ -59,6 +59,23 @@
   border: 1px solid #7e9f8c;
   border-radius: 4px;
   outline: none;
+  transition: border-color 0.2s;
+}
+
+.login-form input:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  border-color: #ccc;
+}
+
+.login-form input:focus {
+  border-color: #507060;
+}
+
+/* 에러 상태의 입력 필드 */
+.input-error {
+  border-color: #a02020 !important;
+  background-color: #fff5f5;
 }
 
 /* ID + PW + 버튼 한 줄로 */
@@ -89,9 +106,18 @@
   padding: 0.75rem;
   border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
-.signin-btn:hover {
+
+.signin-btn:hover:not(:disabled) {
   background-color: #507060;
+}
+
+.signin-btn:disabled,
+.signin-btn.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* Sign up 버튼 */
@@ -112,7 +138,29 @@
   transition: background-color 0.2s;
 }
 
-.signup-btn:hover {
+.signup-btn:hover:not(:disabled) {
   background-color: #507060;
   color: #fff;
+}
+
+.signup-btn:disabled,
+.signup-btn.disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 에러 메시지 스타일 */
+.error-message {
+  background-color: #fff5f5;
+  color: #a02020;
+  padding: 0.75rem;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+  margin-bottom: 0.5rem;
 }

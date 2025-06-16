@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { postSignUp } from "../apis/auth"; // API 함수 import
 import "./Signup.css";
 
 function Signup() {
@@ -10,19 +11,12 @@ function Signup() {
   const [password_check, setPasswordCheck] = useState("");
 
   const navigate = useNavigate();
-  const handleSignup = (e) => {
-    e.preventDefault();
-    /* 비동기 API 요청 예시...?
-  const checkIdExists = async (id) => {
-  const res = await fetch(`/api/check-id?userId=${id}`);
-  const data = await res.json();
-  return data.exists; // true면 중복
-  };
-    */
 
-    // 예시: 이미 존재하는 ID 목록 (실제로는 API 요청) - 테스트용입니다.
-    const existingIDs = ["user1", "admin", "test123"];
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 기본적인 이메일 형식 정규식
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    // 이메일 형식 검증 정규식
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // 회원가입 유효성 검사 처리
     // 이름 - 한 글자 이상 작성
@@ -47,16 +41,12 @@ function Signup() {
       alert("ID를 입력해주세요.");
       return;
     }
-    // ID - 중복 확인 -----------------------------------------------> DB랑 연동 필요한 부분
-    if (existingIDs.includes(id.trim())) {
-      alert("이미 존재하는 ID입니다. 다른 ID를 입력해주세요.");
+
+    // 비밀번호 - 입력 확인
+    if (!password.trim()) {
+      alert("비밀번호를 입력해주세요.");
       return;
     }
-    /* const exists = await checkIdExists(id);
-    if (exists) {
-    alert("이미 존재하는 ID입니다.");
-    return;
-    } */
 
     // 비밀번호 - 일치 확인
     if (password !== password_check) {
@@ -64,16 +54,37 @@ function Signup() {
       return;
     }
 
-    // 유효성 모두 통과한 경우
-    console.log("회원가입 요청:", {
-      name,
-      email,
-      id,
-      password,
-      password_check,
-    });
+    try {
+      const result = await postSignUp({
+        name: name.trim(),
+        email: email.trim(),
+        service_id: id.trim(),
+        password: password,
+      });
 
-    navigate("/welcome"); // 클릭 시 "/Welcome" 페이지로 이동
+      if (result.resultType === "SUCCESS") {
+        console.log("회원가입 성공:", result);
+        navigate("/welcome"); // 성공 시 Welcome 페이지로 이동
+      } else if (result.resultType === "FAIL") {
+        alert(result.error?.reason || "회원가입에 실패했습니다.");
+      } else {
+        alert("알 수 없는 응답 형식입니다.");
+      }
+    } catch (error) {
+      console.error("회원가입 요청 실패:", error);
+
+      // 에러 응답이 있는 경우 처리
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        if (errorData.resultType === "FAIL") {
+          alert(errorData.error?.reason || "회원가입에 실패했습니다.");
+        } else {
+          alert("회원가입에 실패했습니다.");
+        }
+      } else {
+        alert("서버와 연결할 수 없습니다.");
+      }
+    }
   };
 
   return (
@@ -87,7 +98,7 @@ function Signup() {
           <div className="input-fields">
             <input
               type="text"
-              placeholder="Name" // 입력칸에 흐리게 보이는 문구
+              placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
